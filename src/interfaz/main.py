@@ -26,6 +26,9 @@ def main():
 
     # Crear el frame de la simulación
     frameSimulacion(ventana)
+
+    # Crear el frame de la tabla
+    frameTabla(ventana)
     
     # Crear el botón de cerrar
     botonCerrar = Button(ventana, text="X", command=ventana.destroy, height=2, width=4)
