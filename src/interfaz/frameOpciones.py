@@ -1,12 +1,11 @@
-from tkinter import *
-from tkinter import ttk
+from tkinter import Frame, Label, StringVar, Entry, Checkbutton, ttk, IntVar
 
 
 def frameOpciones(ventana):
 
     # Crear el frame de las opciones
     frameOpciones = Frame(ventana, width=600, height=300)
-    frameOpciones.place(x=50, y=370)
+    frameOpciones.place(x=50, y=520)
 
     #Crear labels de los métodos de solución
     labelGeneral = Label(frameOpciones, text="Métodos de Solución:", font=("Segoe UI", 12))
@@ -84,3 +83,6 @@ def frameOpciones(ventana):
     valoresPredeterminados = [None, "Regular Spiking", "Intrinsic Bursting", "Chattering", "Fast Spiking", "Talamo-Cortical", "Resonador"]
     dropdown = ttk.Combobox(frameOpciones, value=valoresPredeterminados)
     dropdown.place(x=380, y=30)
+
+    # Retornar todas las variables
+    return metodo1Var, metodo2Var, metodo3Var, metodo4Var, metodo5Var, var1variable, var2variable, paramABox, paramBBox, paramCBox, paramDBox, dropdown
