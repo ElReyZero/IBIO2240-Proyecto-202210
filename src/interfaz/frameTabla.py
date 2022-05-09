@@ -1,5 +1,4 @@
-from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, Frame, NO, CENTER
 
 def frameTabla(ventana):
     # Crear el frame con la tabla
