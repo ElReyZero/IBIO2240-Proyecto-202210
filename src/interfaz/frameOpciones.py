@@ -1,4 +1,4 @@
-from tkinter import Frame, Label, StringVar, Entry, Checkbutton, ttk, IntVar
+from tkinter import Frame, Label, StringVar, Entry, Checkbutton, ttk, BooleanVar
 
 
 def frameOpciones(ventana):
@@ -11,23 +11,23 @@ def frameOpciones(ventana):
     labelGeneral = Label(frameOpciones, text="Métodos de Solución:", font=("Segoe UI", 12))
     labelGeneral.place(x=0, y=0)
     
-    metodo1Var = IntVar()
+    metodo1Var = BooleanVar()
     metodo1 = Checkbutton(frameOpciones, text="Range Kutta 2", variable=metodo1Var, font=("Segoe UI Semibold", 12))
     metodo1.place(x=0, y=30)
 
-    metodo2Var = IntVar()
+    metodo2Var = BooleanVar()
     metodo2 = Checkbutton(frameOpciones, text="Range Kutta 4", variable=metodo2Var, font=("Segoe UI Semibold", 12))
     metodo2.place(x=0, y=60)
 
-    metodo3Var = IntVar()
+    metodo3Var = BooleanVar()
     metodo3 = Checkbutton(frameOpciones, text="Euler Adelante", variable=metodo3Var, font=("Segoe UI Semibold", 12))
     metodo3.place(x=0, y=90)
 
-    metodo4Var = IntVar()
+    metodo4Var = BooleanVar()
     metodo4 = Checkbutton(frameOpciones, text="Euler Atrás", variable=metodo4Var, font=("Segoe UI Semibold", 12))
     metodo4.place(x=0, y=120)
 
-    metodo5Var = IntVar()
+    metodo5Var = BooleanVar()
     metodo5 = Checkbutton(frameOpciones, text="Euler Modificado", variable=metodo5Var, font=("Segoe UI Semibold", 12))
     metodo5.place(x=0, y=150)
 
@@ -35,12 +35,12 @@ def frameOpciones(ventana):
     labelGeneral = Label(frameOpciones, text="Variables:", font=("Segoe UI", 12))
     labelGeneral.place(x=230, y=0)
 
-    var1variable = IntVar()
-    var1 = Checkbutton(frameOpciones, text="V(t)", variable=var1variable, font=("Segoe UI Semibold", 12))
+    variableV = BooleanVar()
+    var1 = Checkbutton(frameOpciones, text="V(t)", variable=variableV, font=("Segoe UI Semibold", 12))
     var1.place(x=230, y=30)
 
-    var2variable = IntVar()
-    var2 = Checkbutton(frameOpciones, text="u(t)", variable=var2variable, font=("Segoe UI Semibold", 12))
+    variableU = BooleanVar()
+    var2 = Checkbutton(frameOpciones, text="u(t)", variable=variableU, font=("Segoe UI Semibold", 12))
     var2.place(x=230, y=60)
 
     # Crear labels de parámetros
@@ -85,4 +85,4 @@ def frameOpciones(ventana):
     dropdown.place(x=380, y=30)
 
     # Retornar todas las variables
-    return metodo1Var, metodo2Var, metodo3Var, metodo4Var, metodo5Var, var1variable, var2variable, paramABox, paramBBox, paramCBox, paramDBox, dropdown
+    return metodo1Var, metodo2Var, metodo3Var, metodo4Var, metodo5Var, variableV, variableU, paramABox, paramBBox, paramCBox, paramDBox, dropdown

@@ -44,3 +44,5 @@ def frameTabla(ventana):
 
     tabla.place(x=60, y=0)
     tabla.config(height=len(data))
+
+    return tabla
