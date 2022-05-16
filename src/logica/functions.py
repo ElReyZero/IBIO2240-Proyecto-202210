@@ -1,5 +1,6 @@
 from .classes import Solution
 from .exceptions import InvalidParameters
+import numpy as np 
 
 def simular(datos):
     """
@@ -53,3 +54,36 @@ def simular(datos):
         pass
     else:
         raise InvalidParameters("El valor predeterminado elegido no es válido")
+
+
+def eulerAdelante(y0:float, t0:float, tf:float, h:float, f1, f2, solution)->tuple:
+    """Función que calcula la solución de una ecuación diferencial mediante el método de Euler Adelante.
+
+    Args:
+        y0 (float): Valor inicial de la función.
+        t0 (float): Valor inicial del tiempo.
+        tf (float): Valor final del tiempo.
+        h (float): Incremento de tiempo.
+        f (_type_): Función que representa la ecuación diferencial.
+
+    Returns:
+        tuple: Tupla con los valores de la función en cada instante de tiempo.
+    """
+    
+    vectorT = np.arange(t0, tf+h, h)
+    vForEuler = np.zeros(len(vectorT))
+    vForEuler[0] = y0
+    uForEuler = np.zeros(len(vectorT))
+    uForEuler[0] = y0
+
+    for i in range(1, len(vectorT)):
+        
+        if vForEuler[i-1] < 30:
+            vForEuler[i] = vForEuler[i-1] + h*f1(vectorT[i-1], vForEuler[i-1], uForEuler[i-1])
+            uForEuler[i] = uForEuler[i-1] + h*f2(vectorT[i-1], uForEuler[i-1], vForEuler[i-1])
+        else:
+            vForEuler[i] = solution.c
+            uForEuler[i] = uForEuler[i-1] + solution.d
+
+
+    return vectorT, vForEuler, uForEuler

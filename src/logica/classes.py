@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from .exceptions import InvalidParameters
-
+from .functions import eulerAdelante
 
 class ProgramGUIVariables:
     """
@@ -134,8 +134,20 @@ class Solution:
     eulerAtras: bool = False
     eulerModificado: bool = False
 
-    def equation1(self, v, u):
-        pass
+    def I(t):
+        if t > 200 and t < 600:
+            I = 10
+        else:
+            I = 0
+        return I
 
-    def equation2(self, v, u):
+    def equation1(self, t, v, u):
+        return (0.04*v**2) + 4*v + 140 - u + self.I(t)
+
+    def equation2(self, t, v, u):
         return self.a  * (self.b*v -u)
+
+    def solveEulerForward():
+        eulerAdelante()
+
+    # Euler hacia atrás: Despejar función
