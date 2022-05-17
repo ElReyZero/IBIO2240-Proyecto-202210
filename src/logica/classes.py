@@ -106,14 +106,11 @@ class ProgramGUIVariables:
         return [V, U]
 
     def getSelectedParameters(self):
-        try:
-            a = float(self.opciones['parametros']['a'].get())
-            b = float(self.opciones['parametros']['b'].get())
-            c = float(self.opciones['parametros']['c'].get())
-            d = float(self.opciones['parametros']['d'].get())
-            return [a, b, c, d]
-        except ValueError:
-            raise InvalidParameters("Los parámetros a, b, c y d deben ser números")
+        a = self.opciones['parametros']['a'].get()
+        b = self.opciones['parametros']['b'].get()
+        c = self.opciones['parametros']['c'].get()
+        d = self.opciones['parametros']['d'].get()
+        return [a, b, c, d]
 
     def getComboboxInfo(self):
         return self.opciones['dropdown'].get()
@@ -140,6 +137,16 @@ class Solution:
     tiempoFinal: float
     valorEstimulacion: float
     
+    def paramsToFloat(self):
+        """Función auxiliar que revisa que una variable sea del tipo correcto"""
+        try:
+            self.a = float(self.a)
+            self.b = float(self.b)
+            self.c = float(self.c)
+            self.d = float(self.d)
+        except ValueError:
+            raise InvalidParameters("Los parámetros a, b, c y d deben ser números")
+
     def I(self, t):
         if t > self.tiempoInicio and self.tiempoFinal < 600:
             I = self.valorEstimulacion
