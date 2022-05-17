@@ -23,7 +23,6 @@ def eulerAdelante(v0:float, u0:float, t0:float, tf:float, h:float, f1, f2, solut
     uForEuler[0] = u0
 
     for i in range(1, len(vectorT)):
-        
         if vForEuler[i-1] <= 30:
             vForEuler[i] = vForEuler[i-1] + h*f1(vectorT[i-1], vForEuler[i-1], uForEuler[i-1])
             uForEuler[i] = uForEuler[i-1] + h*f2(vectorT[i-1], uForEuler[i-1], vForEuler[i-1])

@@ -1,6 +1,6 @@
 from tkinter import Frame, StringVar, Entry, Button, Scale, Label, HORIZONTAL, filedialog
 from logica.functions import cargarDatos
-def frameSimulacion(ventana):
+def frameSimulacion(ventana, datosInterfaz):
     # Crear el frame con las opciones de simulación
     xInicial = 100
 
@@ -67,14 +67,14 @@ def frameSimulacion(ventana):
     labelValor.place(x=xInicial, y=160)
 
     # Crear botón de carga de datos
-    botonCargar = Button(frameSimulacion, text="Cargar Datos", command=cargarArchivo, height=2, width=20)
+    botonCargar = Button(frameSimulacion, text="Cargar Datos", command=lambda:cargarArchivo(datosInterfaz), height=2, width=20)
     botonCargar.place(x=400, y=230)
 
     # Retornar todas las variables
     return estimulacionScrollbar, paramTiempo, paramTiempoInicio, paramTiempoFin
 
 
-def cargarArchivo(subplot):
+def cargarArchivo(datosInterfaz):
     #TODO Hallar la forma de pasar el subplot como parámetro
-    filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("bin files","*.bin"),("all files","*.*")))
-    cargarDatos(filename, subplot)
+    filename = filedialog.askopenfilename(initialdir = "./",title = "Select file",filetypes = (("bin files","*.bin"),("all files","*.*")))
+    cargarDatos(filename, datosInterfaz)

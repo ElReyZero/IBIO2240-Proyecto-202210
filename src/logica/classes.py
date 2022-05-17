@@ -148,13 +148,13 @@ class Solution:
         return I
 
     def equation1(self, t, v, u):
-        return (0.04*v**2) + 4*v + 140 - u + self.I(t)
+        return (0.04*v**2) + 5*v + 140 - u + self.I(t)
 
-    def equation2(self, t, v, u):
-        return self.a*(self.b*v -u)
+    def equation2(self, t, u, v):
+        return self.a*(self.b*v - u)
 
     def solveEulerForward(self):
-        return eulerAdelante(-65, -14, 0, self.tiempoSimulacion, 0.01, self.equation1, self.equation2, self) 
+        return eulerAdelante(-65.0, -14.0, 0.0, self.tiempoSimulacion, 0.01, self.equation1, self.equation2, self) 
 
     # Euler hacia atrás: Despejar función
 
@@ -176,7 +176,7 @@ class SaveData:
     uRK4 : np.array
 
     def save(self, fileName):
-        pickle.dump(self, open(fileName, 'wb'))
+        pickle.dump(self, open(fileName, 'wb'), pickle.HIGHEST_PROTOCOL)
 
     @staticmethod
     def load(fileName):
@@ -185,3 +185,6 @@ class SaveData:
 
     def asList(self):
         return [self.tiempo, self.vFor, self.uFor, self.vBack, self.uBack, self.vMod, self.uMod, self.vRK2, self.uRK2, self.vRK4, self.uRK4]
+    
+    def asDict(self):
+        return {'tiempo': self.tiempo, 'vFor': self.vFor, 'uFor': self.uFor, 'vBack': self.vBack, 'uBack': self.uBack, 'vMod': self.vMod, 'uMod': self.uMod, 'vRK2': self.vRK2, 'uRK2': self.uRK2, 'vRK4': self.vRK4, 'uRK4': self.uRK4}

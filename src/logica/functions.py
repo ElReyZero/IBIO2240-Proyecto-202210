@@ -1,6 +1,6 @@
 from .classes import Solution, SaveData
 from .exceptions import InvalidParameters
-import time
+from  datetime import datetime
 
 # Variable global que almacena la última gráfica por si se quiere guardar
 LATEST_PLOT= None
@@ -63,7 +63,7 @@ def simular(datos):
                 subplot.plot(tiempo, vFor, label='Euler Adelante - V(t)')
             if U:
                 subplot.plot(tiempo, uFor, label='Euler Adelante - U(t)')
-            else:
+            if not V and not U:
                 raise InvalidParameters("Es necesario seleccionar una función para resolver")
         if eulerAtras:
             pass
@@ -72,7 +72,7 @@ def simular(datos):
                 #subplot.plot(tiempo, vBack, label='Euler Atras - V(t)')
             #if U:
                 #subplot.plot(tiempo, uBack, label='Euler Atras - U(t)')
-            #else:
+            #if not V and not U:
                 #raise InvalidParameters("Es necesario seleccionar una función para resolver")
         if eulerModificado:
             pass
@@ -81,7 +81,7 @@ def simular(datos):
                 #subplot.plot(tiempo, vMod, label='Euler Modificado - V(t)')
             #if U:
                 #subplot.plot(tiempo, uMod, label='Euler Modificado - U(t)')
-            #else:
+            #if not V and not U:
                 #raise InvalidParameters("Es necesario seleccionar una función para resolver")
         if rungeKutta2:
             pass
@@ -90,7 +90,7 @@ def simular(datos):
                 #subplot.plot(tiempo, vRK2, label='Runge Kutta 2 - V(t)')
             #if U:
                 #subplot.plot(tiempo, uRK2, label='Runge Kutta 2 - U(t)')
-            #else:
+            #if not V and not U:
                 #raise InvalidParameters("Es necesario seleccionar una función para resolver")
         if rungeKutta4:
             pass
@@ -99,7 +99,7 @@ def simular(datos):
                 #subplot.plot(tiempo, vRK4, label='Runge Kutta 4 - V(t)')
             #if U:
                 #subplot.plot(tiempo, uRK4, label='Runge Kutta 4 - U(t)')
-            #else:
+            #if not V and not U:
                 #raise InvalidParameters("Es necesario seleccionar una función para resolver")
         if not eulerAdelante and not eulerAtras and not eulerModificado and not rungeKutta2 and not rungeKutta4:
             raise InvalidParameters("No se seleccionó ningún método")
@@ -133,18 +133,30 @@ def simular(datos):
 
 def exportarDatos():
     if LATEST_PLOT:
-        LATEST_PLOT.save("plot"+str(time.now())+".bin")
+        LATEST_PLOT.save("PlotFile_"+str(datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))+".bin")
     else:
         raise InvalidParameters("No se han generado datos para exportar")
 
-def cargarDatos(fileName, subplot):
+def cargarDatos(fileName, datosInterfaz):
     if not fileName == "":
+        # Se cargan los datos usando el método load de SaveData
         datos = SaveData.load(fileName)
+        # Se transforman los datos a lista
         listaCargada = datos.asList()
+        
+        # Se obtienen el tiempo de la lista cargada
         tiempo = listaCargada[0]
+        # Se obtienen los datos de la interfaz
+        interfaz = datosInterfaz.getMatplotlib()
+        canvas = interfaz[0]
+        subplot = interfaz[1]
 
+        # Se limpia el canvas
         subplot.clear()
-        for elemento in range(1, listaCargada):
-            if elemento:
-                subplot.plot(tiempo, elemento)
+
+        for elemento in range(1, len(listaCargada)):
+            # Se grafica cada elemento que no sea nulo
+            if listaCargada[elemento] is not None:
+                subplot.plot(tiempo, listaCargada[elemento])
+        canvas.draw()
 
