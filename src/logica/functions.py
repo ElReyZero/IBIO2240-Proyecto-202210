@@ -1,6 +1,5 @@
 from .classes import Solution
 from .exceptions import InvalidParameters
-import numpy as np 
 
 def simular(datos):
     """
@@ -29,9 +28,66 @@ def simular(datos):
         c = params[2]
         d = params[3]
 
+        # Se obtienen los parámetros de la simulación
+        simulacion = datos.getSimulacionData()
+        tiempoSimulacion = simulacion[1]
+        tiempoInicio = simulacion[2]
+        tiempoFinal = simulacion[3]
+        valorEstimulacion = simulacion[0]
+
         # Se crea una instancia de la clase Solution con los valores obtenidos
-        solucion = Solution(a, b, c, d, V, U, rungeKutta2, rungeKutta4, eulerAdelante, eulerAtras, eulerModificado)
-        print(solucion)
+        solucion = Solution(a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
+        canvas, subplot = datos.getMatplotlib()
+        subplot.clear()
+        if eulerAdelante:
+            tiempo, vFor, uFor = solucion.solveEulerForward()
+            if V:
+                subplot.plot(tiempo, vFor, label='Euler Adelante - V(t)')
+            if U:
+                subplot.plot(tiempo, uFor, label='Euler Adelante - U(t)')
+            else:
+                raise InvalidParameters("Es necesario seleccionar una función para resolver")
+        if eulerAtras:
+            pass
+            #tiempo, vBack, uBack = solucion.solveEulerBackward()
+            #if V:
+                #subplot.plot(tiempo, vBack, label='Euler Atras - V(t)')
+            #if U:
+                #subplot.plot(tiempo, uBack, label='Euler Atras - U(t)')
+            #else:
+                #raise InvalidParameters("Es necesario seleccionar una función para resolver")
+        if eulerModificado:
+            pass
+            #tiempo, vMod, uMod = solucion.solveEulerModified()
+            #if V:
+                #subplot.plot(tiempo, vMod, label='Euler Modificado - V(t)')
+            #if U:
+                #subplot.plot(tiempo, uMod, label='Euler Modificado - U(t)')
+            #else:
+                #raise InvalidParameters("Es necesario seleccionar una función para resolver")
+        if rungeKutta2:
+            pass
+            #tiempo, vRK2, uRK2 = solucion.solveRungeKutta2()
+            #if V:
+                #subplot.plot(tiempo, vRK2, label='Runge Kutta 2 - V(t)')
+            #if U:
+                #subplot.plot(tiempo, uRK2, label='Runge Kutta 2 - U(t)')
+            #else:
+                #raise InvalidParameters("Es necesario seleccionar una función para resolver")
+        if rungeKutta4:
+            pass
+            #tiempo, vRK4, uRK4 = solucion.solveRungeKutta4()
+            #if V:
+                #subplot.plot(tiempo, vRK4, label='Runge Kutta 4 - V(t)')
+            #if U:
+                #subplot.plot(tiempo, uRK4, label='Runge Kutta 4 - U(t)')
+            #else:
+                #raise InvalidParameters("Es necesario seleccionar una función para resolver")
+        if not eulerAdelante and not eulerAtras and not eulerModificado and not rungeKutta2 and not rungeKutta4:
+            raise InvalidParameters("No se seleccionó ningún método")
+        subplot.legend()
+        canvas.draw()
+
 
 
     elif defaultParams == 'Regular Spiking':
@@ -54,36 +110,3 @@ def simular(datos):
         pass
     else:
         raise InvalidParameters("El valor predeterminado elegido no es válido")
-
-
-def eulerAdelante(y0:float, t0:float, tf:float, h:float, f1, f2, solution)->tuple:
-    """Función que calcula la solución de una ecuación diferencial mediante el método de Euler Adelante.
-
-    Args:
-        y0 (float): Valor inicial de la función.
-        t0 (float): Valor inicial del tiempo.
-        tf (float): Valor final del tiempo.
-        h (float): Incremento de tiempo.
-        f (_type_): Función que representa la ecuación diferencial.
-
-    Returns:
-        tuple: Tupla con los valores de la función en cada instante de tiempo.
-    """
-    
-    vectorT = np.arange(t0, tf+h, h)
-    vForEuler = np.zeros(len(vectorT))
-    vForEuler[0] = y0
-    uForEuler = np.zeros(len(vectorT))
-    uForEuler[0] = y0
-
-    for i in range(1, len(vectorT)):
-        
-        if vForEuler[i-1] < 30:
-            vForEuler[i] = vForEuler[i-1] + h*f1(vectorT[i-1], vForEuler[i-1], uForEuler[i-1])
-            uForEuler[i] = uForEuler[i-1] + h*f2(vectorT[i-1], uForEuler[i-1], vForEuler[i-1])
-        else:
-            vForEuler[i] = solution.c
-            uForEuler[i] = uForEuler[i-1] + solution.d
-
-
-    return vectorT, vForEuler, uForEuler

@@ -10,12 +10,22 @@ path = str(Path(Path(__file__).parent.absolute()).parent.absolute())
 sys.path.insert(0, path)
 from logica.classes import ProgramGUIVariables
 from logica.functions import simular
+import logica.exceptions as ex
+import traceback
 
 def report_callback_exception(self, exc, val, tb):
     """Función para sobreescribir las excepciones ocurridas durante la ejecución del programa
     """
-    # Muestra la excepción que ocurrió como forma de errorbox
-    showerror("Error", message=str(val))
+    if isinstance(exc, KeyboardInterrupt):
+        # Si se interrumpe el programa, se cierra el programa
+        self.destroy()
+        sys.exit()
+    elif exc.__name__ == 'InvalidParameters':
+        # Muestra la excepción que ocurrió como forma de errorbox
+        showerror("Error", message=str(val))
+    else:
+        print(traceback.print_tb(tb))
+        print(val)
 
 def main():
     # Crear la ventana principal
@@ -29,8 +39,8 @@ def main():
     datosInterfaz = ProgramGUIVariables()
 
     # Crear el frame de matplotlib
-    canvas, figure = frameMatplotlib(ventana)
-    datosInterfaz.setMatplotlib(canvas, figure)
+    canvas, subplot = frameMatplotlib(ventana)
+    datosInterfaz.setMatplotlib(canvas, subplot)
 
     # Crear el frame de las opciones
     metodo1Var, metodo2Var, metodo3Var, metodo4Var, metodo5Var, variableV, variableU, paramABox, paramBBox, paramCBox, paramDBox, dropdown = frameOpciones(ventana)
@@ -40,8 +50,8 @@ def main():
     datosInterfaz.setDropdownOpciones(dropdown)
 
     # Crear el frame de la simulación
-    estimulacionScrollbar, paramTiempo, paramTiempoInicio, paramTiempoFin, paramValor = frameSimulacion(ventana)
-    datosInterfaz.setEstimulacion(estimulacionScrollbar, paramTiempo, paramTiempoInicio, paramTiempoFin, paramValor)
+    estimulacionScrollbar, paramTiempo, paramTiempoInicio, paramTiempoFin = frameSimulacion(ventana)
+    datosInterfaz.setEstimulacion(estimulacionScrollbar, paramTiempo, paramTiempoInicio, paramTiempoFin)
 
     # Crear el frame de la tabla
     tabla = frameTabla(ventana)

@@ -1,6 +1,6 @@
+from .solveMethods import eulerAdelante
 from dataclasses import dataclass
 from .exceptions import InvalidParameters
-from .functions import eulerAdelante
 
 class ProgramGUIVariables:
     """
@@ -10,7 +10,7 @@ class ProgramGUIVariables:
         # Definimos diccionarios específicos donde almacenar cada variable
         self.matplotlib = {}
         self.matplotlib['canvas'] = None
-        self.matplotlib['figure'] = None
+        self.matplotlib['subplot'] = None
 
         self.opciones = {}
         self.opciones['metodos'] = {}
@@ -34,14 +34,13 @@ class ProgramGUIVariables:
         self.simulacion['tiempoSimulacion'] = None
         self.simulacion['tiempoInicio'] = None
         self.simulacion['tiempoFinal'] = None
-        self.simulacion['valorSimulacion'] = None
 
         self.tabla = {}
         self.tabla['tabla'] = None
 
-    def setMatplotlib(self, canvas, figure):
+    def setMatplotlib(self, canvas, subplot):
         self.matplotlib['canvas'] = canvas
-        self.matplotlib['figure'] = figure
+        self.matplotlib['subplot'] = subplot
 
     def setMetodos(self, metodo1, metodo2, metodo3, metodo4, metodo5):
         self.opciones['metodos']['Runge_Kutta_2'] = metodo1
@@ -63,24 +62,30 @@ class ProgramGUIVariables:
     def setDropdownOpciones(self, dropdown):
         self.opciones['dropdown'] = dropdown
 
-    def setEstimulacion(self, scrollbarEstimulacion, tiempoSimulacion, tiempoInicio, tiempoFinal, valorSimulacion):
+    def setEstimulacion(self, scrollbarEstimulacion, tiempoSimulacion, tiempoInicio, tiempoFinal):
         self.simulacion['ScrollbarEstimulacion'] = scrollbarEstimulacion
         self.simulacion['tiempoSimulacion'] = tiempoSimulacion
         self.simulacion['tiempoInicio'] = tiempoInicio
         self.simulacion['tiempoFinal'] = tiempoFinal
-        self.simulacion['valorSimulacion'] = valorSimulacion
 
     def setTabla(self, tabla):
         self.tabla['tabla'] = tabla
 
     def getMatplotlib(self):
-        return self.matplotlib
+        return [self.matplotlib["canvas"], self.matplotlib["subplot"]]
     
     def getOpciones(self):
         return self.opciones
 
-    def getSimulacion(self):
-        return self.simulacion
+    def getSimulacionData(self):
+        try:
+            scrollBarEstimulacion = float(self.simulacion['ScrollbarEstimulacion'].get())
+            tiempoSimulacion = float(self.simulacion['tiempoSimulacion'].get())
+            tiempoInicio = float(self.simulacion['tiempoInicio'].get())
+            tiempoFinal = float(self.simulacion['tiempoFinal'].get())
+            return [scrollBarEstimulacion, tiempoSimulacion, tiempoInicio, tiempoFinal]
+        except ValueError:
+            raise InvalidParameters("Los parámetros de simulación no son válidos")
 
     def getTabla(self):
         return self.tabla
@@ -127,27 +132,26 @@ class Solution:
     v: bool
     u: bool
 
-    # Métodos de Solución
-    rungeKutta2: bool = False
-    rungeKutta4: bool = False
-    eulerAdelante: bool = False
-    eulerAtras: bool = False
-    eulerModificado: bool = False
-
-    def I(t):
+    # Parámetros de la simulación
+    tiempoSimulacion: float
+    tiempoInicio: float
+    tiempoFinal: float
+    valorEstimulacion: float
+    
+    def I(self, t):
         if t > 200 and t < 600:
-            I = 10
+            I = 10.0
         else:
-            I = 0
+            I = 0.0
         return I
 
     def equation1(self, t, v, u):
-        return (0.04*v**2) + 4*v + 140 - u + self.I(t)
+        return (0.04*v**2) + 5*v + 140 - u + self.I(t)
 
     def equation2(self, t, v, u):
         return self.a  * (self.b*v -u)
 
-    def solveEulerForward():
-        eulerAdelante()
+    def solveEulerForward(self):
+        return eulerAdelante(-65, -14, self.tiempoInicio, self.tiempoSimulacion, 0.01, self.equation1, self.equation2, self) 
 
     # Euler hacia atrás: Despejar función

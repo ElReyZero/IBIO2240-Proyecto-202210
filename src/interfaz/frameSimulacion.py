@@ -11,10 +11,19 @@ def frameSimulacion(ventana):
     labelEstimulacion = Label(frameSimulacion, text="Estimulación:", font=("Segoe UI", 12))
     labelEstimulacion.place(x=xInicial, y=0)
 
+    paramValor = Label(frameSimulacion, text=0, width=7, font=("Segoe UI", 12))
+    paramValor.place(x=xInicial+190, y=160)
+    def setLabel(value):
+        # Función que cambia dinámicamente el valor del label de la estimulación
+        paramValor.config(text=str(value))
+
+    labelMaValor = Label(frameSimulacion, text="mA", font=("Segoe UI", 12))
+    labelMaValor.place(x=xInicial+245, y=160)
+
     # Crear scrollbar
     label1Scrollbar = Label(frameSimulacion, text="-100mA", font=("Segoe UI", 12))
     label1Scrollbar.place(x=20, y=40)
-    estimulacionScrollbar = Scale(frameSimulacion, from_=-100, to=100, orient=HORIZONTAL, length=270)
+    estimulacionScrollbar = Scale(frameSimulacion, from_=-100, to=100, orient=HORIZONTAL, length=270, command=setLabel)
     estimulacionScrollbar.place(x=90, y=25)
     label2Scrollbar = Label(frameSimulacion, text="100mA", font=("Segoe UI", 12))
     label2Scrollbar.place(x=360, y=40)
@@ -57,16 +66,11 @@ def frameSimulacion(ventana):
     labelValor = Label(frameSimulacion, text="Valor de la Estimulación:", font=("Segoe UI", 12))
     labelValor.place(x=xInicial, y=160)
 
-    paramValor = StringVar(None)
-    paramValor = Entry(frameSimulacion, textvariable=paramValor, width=7)
-    paramValor.place(x=xInicial+220, y=165)
-
-    labelMaValor = Label(frameSimulacion, text="mA", font=("Segoe UI", 12))
-    labelMaValor.place(x=xInicial+245, y=160)
-
     # Crear botón de carga de datos
     botonCargar = Button(frameSimulacion, text="Cargar Datos", command=None, height=2, width=20)
     botonCargar.place(x=400, y=230)
 
     # Retornar todas las variables
-    return estimulacionScrollbar, paramTiempo, paramTiempoInicio, paramTiempoFin, paramValor
+    return estimulacionScrollbar, paramTiempo, paramTiempoInicio, paramTiempoFin
+
+
