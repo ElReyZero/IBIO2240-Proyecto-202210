@@ -1,5 +1,9 @@
-from .classes import Solution
+from .classes import Solution, SaveData
 from .exceptions import InvalidParameters
+import time
+
+# Variable global que almacena la última gráfica por si se quiere guardar
+LATEST_PLOT= None
 
 def simular(datos):
     """
@@ -38,7 +42,21 @@ def simular(datos):
         # Se crea una instancia de la clase Solution con los valores obtenidos
         solucion = Solution(a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
         canvas, subplot = datos.getMatplotlib()
+        # Se limpia el canvas
         subplot.clear()
+
+        # Se guardan variables para la posible persistencia de los datos
+        vFor = None
+        uFor = None
+        vBack = None
+        uBack = None
+        vMod = None
+        uMod = None
+        vRK2 = None
+        uRK2 = None
+        vRK4 = None
+        uRK4 = None
+
         if eulerAdelante:
             tiempo, vFor, uFor = solucion.solveEulerForward()
             if V:
@@ -87,8 +105,9 @@ def simular(datos):
             raise InvalidParameters("No se seleccionó ningún método")
         subplot.legend()
         canvas.draw()
-
-
+        
+        global LATEST_PLOT
+        LATEST_PLOT = SaveData(tiempo, vFor, uFor, vBack, uBack, vMod, uMod, vRK2, uRK2, vRK4, uRK4)
 
     elif defaultParams == 'Regular Spiking':
         # Se ejecuta una simulación con el ajuste predeterminado de Regular Spiking
@@ -110,3 +129,22 @@ def simular(datos):
         pass
     else:
         raise InvalidParameters("El valor predeterminado elegido no es válido")
+
+
+def exportarDatos():
+    if LATEST_PLOT:
+        LATEST_PLOT.save("plot"+str(time.now())+".bin")
+    else:
+        raise InvalidParameters("No se han generado datos para exportar")
+
+def cargarDatos(fileName, subplot):
+    if not fileName == "":
+        datos = SaveData.load(fileName)
+        listaCargada = datos.asList()
+        tiempo = listaCargada[0]
+
+        subplot.clear()
+        for elemento in range(1, listaCargada):
+            if elemento:
+                subplot.plot(tiempo, elemento)
+

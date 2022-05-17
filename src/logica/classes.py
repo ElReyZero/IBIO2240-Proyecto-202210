@@ -1,6 +1,8 @@
 from .solveMethods import eulerAdelante
 from dataclasses import dataclass
 from .exceptions import InvalidParameters
+import pickle
+import numpy as np
 
 class ProgramGUIVariables:
     """
@@ -139,19 +141,47 @@ class Solution:
     valorEstimulacion: float
     
     def I(self, t):
-        if t > 200 and t < 600:
-            I = 10.0
+        if t > self.tiempoInicio and self.tiempoFinal < 600:
+            I = self.valorEstimulacion
         else:
             I = 0.0
         return I
 
     def equation1(self, t, v, u):
-        return (0.04*v**2) + 5*v + 140 - u + self.I(t)
+        return (0.04*v**2) + 4*v + 140 - u + self.I(t)
 
     def equation2(self, t, v, u):
-        return self.a  * (self.b*v -u)
+        return self.a*(self.b*v -u)
 
     def solveEulerForward(self):
-        return eulerAdelante(-65, -14, self.tiempoInicio, self.tiempoSimulacion, 0.01, self.equation1, self.equation2, self) 
+        return eulerAdelante(-65, -14, 0, self.tiempoSimulacion, 0.01, self.equation1, self.equation2, self) 
 
     # Euler hacia atrás: Despejar función
+
+@dataclass
+class SaveData:
+    """
+    Clase para guardar los datos de una gráfica en un archivo bin.
+    """
+    tiempo : np.array
+    vFor : np.array
+    uFor : np.array
+    vBack : np.array
+    uBack : np.array
+    vMod : np.array
+    uMod : np.array
+    vRK2 : np.array
+    uRK2 : np.array
+    vRK4 : np.array
+    uRK4 : np.array
+
+    def save(self, fileName):
+        pickle.dump(self, open(fileName, 'wb'))
+
+    @staticmethod
+    def load(fileName):
+        data =  pickle.load(open(fileName, 'rb'))
+        return data
+
+    def asList(self):
+        return [self.tiempo, self.vFor, self.uFor, self.vBack, self.uBack, self.vMod, self.uMod, self.vRK2, self.uRK2, self.vRK4, self.uRK4]

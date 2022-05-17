@@ -1,17 +1,20 @@
 import sys
 from pathlib import Path
+path = str(Path(Path(__file__).parent.absolute()).parent.absolute())
+sys.path.insert(0, path)
 from tkinter import Tk, Label, Button
 from tkinter.messagebox import showerror
 from frameOpciones import frameOpciones
 from frameSimulacion import frameSimulacion
 from frameTabla import frameTabla
 from frameMatplotLib import frameMatplotlib   
-path = str(Path(Path(__file__).parent.absolute()).parent.absolute())
-sys.path.insert(0, path)
 from logica.classes import ProgramGUIVariables
-from logica.functions import simular
+from logica.functions import simular, cargarDatos, exportarDatos
 import logica.exceptions as ex
 import traceback
+
+# variable global que almacena la instancia de la ventana principal y sus variables
+datosInterfaz = None
 
 def report_callback_exception(self, exc, val, tb):
     """Función para sobreescribir las excepciones ocurridas durante la ejecución del programa
@@ -36,6 +39,7 @@ def main():
     ventana.resizable(0, 0)
 
     # Crear una instancia para guardar las variables de la interfaz
+    global datosInterfaz
     datosInterfaz = ProgramGUIVariables()
 
     # Crear el frame de matplotlib
@@ -71,12 +75,15 @@ def main():
     botonSimular.place(x=850, y=700)
 
     # Crear botón de exportar
-    botonExportar = Button(ventana, text="Exportar", command=None, height=2, width=20)
+    botonExportar = Button(ventana, text="Exportar", command=guardarDatos, height=2, width=20)
     botonExportar.place(x=1010, y=700)
 
     # Sobreescribir el método de atrapada de excepciones por defecto
     Tk.report_callback_exception = report_callback_exception
     ventana.mainloop()
+
+def guardarDatos():
+    exportarDatos()
 
 if __name__ == "__main__":
     main()
