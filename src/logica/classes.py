@@ -199,7 +199,7 @@ class Solution:
             raise InvalidParameters("El tiempo de inicio debe ser menor al tiempo de simulación")
 
     def I(self, t):
-        if t > self.tiempoInicio and self.tiempoFinal < 600:
+        if t > self.tiempoInicio and t < self.tiempoFinal:
             I = self.valorEstimulacion
         else:
             I = 0.0
