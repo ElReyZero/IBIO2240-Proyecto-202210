@@ -23,15 +23,11 @@ def frameTabla(ventana):
     tabla.heading("inicial", text="T inicial (ms)", anchor=CENTER)
     tabla.heading("final", text="T final (ms)", anchor=CENTER)
     tabla.heading("estimulacion", text="Estimulación (mA)", anchor=CENTER)
-
-    data = [["", "", ""], 
-            ["", "", ""], 
-            ["", "", ""]]
-
+    
     tabla.tag_configure('oddrow', background='#f0f0f0')
     tabla.tag_configure('evenrow', background='#e1e1e1')
 
-    global count
+    """ global count
     count = 0
     for record in data:
         if count % 2 == 0:
@@ -40,9 +36,9 @@ def frameTabla(ventana):
         else:
             tabla.insert(parent="", index="end", iid=count, text="", values=(record[0], record[1], record[2]), tags=('oddrow',))
         
-        count += 1
+        count += 1"""
 
     tabla.place(x=60, y=0)
-    tabla.config(height=len(data))
+    tabla.config(height=0)
 
     return tabla

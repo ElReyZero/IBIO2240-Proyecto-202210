@@ -39,6 +39,8 @@ class ProgramGUIVariables:
 
         self.tabla = {}
         self.tabla['tabla'] = None
+        self.tabla['size'] = 0
+        self.tabla['recordedDataAmount'] = 0
 
     def setMatplotlib(self, canvas, subplot):
         self.matplotlib['canvas'] = canvas
@@ -73,6 +75,12 @@ class ProgramGUIVariables:
     def setTabla(self, tabla):
         self.tabla['tabla'] = tabla
 
+    def setTablaSize(self, size):
+        self.tabla['size'] = size
+
+    def setTablaRecordedDataAmount(self, amount):
+        self.tabla['recordedDataAmount'] = amount
+
     def getMatplotlib(self):
         return [self.matplotlib["canvas"], self.matplotlib["subplot"]]
     
@@ -90,7 +98,13 @@ class ProgramGUIVariables:
             raise InvalidParameters("Los parámetros de simulación no son válidos")
 
     def getTabla(self):
-        return self.tabla
+        return self.tabla["tabla"]
+
+    def getTablaSize(self):
+        return self.tabla['size']
+
+    def getTablaRecordedDataAmount(self):
+        return self.tabla['recordedDataAmount']
     
     def getSelectedMethods(self):
         rungeKutta2 = self.opciones['metodos']['Runge_Kutta_2'].get()

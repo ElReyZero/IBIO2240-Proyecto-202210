@@ -73,6 +73,7 @@ def graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerMo
     # Se guarda la gráfica en una variable por si el usuario la quiere persistir
     global LATEST_PLOT
     LATEST_PLOT = SaveData(tiempo, vFor, uFor, vBack, uBack, vMod, uMod, vRK2, uRK2, vRK4, uRK4)
+    
 
 
 
@@ -189,6 +190,31 @@ def simular(datos):
 
     else:
         raise InvalidParameters("El valor predeterminado elegido no es válido")
+    
+    # Se actualiza la tabla
+    tabla = datos.getTabla()
+    tablaSize = datos.getTablaSize()
+
+    # Para evitar overflow de la tabla se revisa si llegó a su máximo tamaño
+    if tablaSize <8:
+        if tablaSize % 2 == 0:
+            tabla.insert("", "end", values=(tiempoInicio, tiempoFinal, valorEstimulacion), tags=('evenrow',))
+
+        else:
+            tabla.insert("", "end", values=(tiempoInicio, tiempoFinal, valorEstimulacion), tags=('oddrow',)) 
+        tablaSize += 1
+        datos.setTablaSize(tablaSize)
+        tabla.config(height=tablaSize)
+        datos.setTablaRecordedDataAmount(tablaSize)
+    else:
+        tabla.delete(tabla.get_children()[0])
+        cantidadDatos = datos.getTablaRecordedDataAmount()
+        if cantidadDatos % 2 == 0:
+            tabla.insert("", "end", values=(tiempoInicio, tiempoFinal, valorEstimulacion), tags=('evenrow',))
+        else:
+            tabla.insert("", "end", values=(tiempoInicio, tiempoFinal, valorEstimulacion), tags=('oddrow',)) 
+        datos.setTablaRecordedDataAmount(cantidadDatos + 1)
+
 
 
 def exportarDatos():
