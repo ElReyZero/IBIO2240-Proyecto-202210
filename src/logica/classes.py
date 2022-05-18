@@ -1,4 +1,4 @@
-from .solveMethods import eulerAdelante, rungeKutta2
+from .solveMethods import eulerAdelante, rungeKutta2, rungeKutta4
 from dataclasses import dataclass
 from .exceptions import InvalidParameters
 import pickle
@@ -10,6 +10,8 @@ class ProgramGUIVariables:
     """
     def __init__(self):
         # Definimos diccionarios específicos donde almacenar cada variable
+        self.ventana = None
+
         self.matplotlib = {}
         self.matplotlib['canvas'] = None
         self.matplotlib['subplot'] = None
@@ -42,16 +44,24 @@ class ProgramGUIVariables:
         self.tabla['size'] = 0
         self.tabla['recordedDataAmount'] = 0
 
+        self.barraProgreso = None
+        self.cargandoLabel = None
+
+    # Setters
+    def setVentana(self, ventana):
+        self.ventana = ventana
+
     def setMatplotlib(self, canvas, subplot):
         self.matplotlib['canvas'] = canvas
         self.matplotlib['subplot'] = subplot
 
-    def setMetodos(self, metodo1, metodo2, metodo3, metodo4, metodo5):
+    def setMetodos(self, metodo1, metodo2, metodo3, metodo4, metodo5, metodo6):
         self.opciones['metodos']['Runge_Kutta_2'] = metodo1
         self.opciones['metodos']['Runge_Kutta_4'] = metodo2
         self.opciones['metodos']['Euler_Adelante'] = metodo3
         self.opciones['metodos']['Euler_Atras'] = metodo4
         self.opciones['metodos']['Euler_Modificado'] = metodo5
+        self.opciones['metodos']['SolveIVP'] = metodo6
     
     def setVariables(self, V, U):
         self.opciones['variables']['V'] = V
@@ -80,6 +90,16 @@ class ProgramGUIVariables:
 
     def setTablaRecordedDataAmount(self, amount):
         self.tabla['recordedDataAmount'] = amount
+
+    def setBarraProgreso(self, barraProgreso):
+        self.barraProgreso = barraProgreso
+
+    def setCargandoLabel(self, cargandoLabel):
+        self.cargandoLabel = cargandoLabel
+
+    ## Getters
+    def getVentana(self):
+        return self.ventana
 
     def getMatplotlib(self):
         return [self.matplotlib["canvas"], self.matplotlib["subplot"]]
@@ -112,7 +132,8 @@ class ProgramGUIVariables:
         eulerAdelante = self.opciones['metodos']['Euler_Adelante'].get()
         eulerAtras = self.opciones['metodos']['Euler_Atras'].get()
         eulerModificado = self.opciones['metodos']['Euler_Modificado'].get()
-        return [rungeKutta2, rungeKutta4, eulerAdelante, eulerAtras, eulerModificado]
+        solveIVP = self.opciones['metodos']['SolveIVP'].get()
+        return [rungeKutta2, rungeKutta4, eulerAdelante, eulerAtras, eulerModificado, solveIVP]
 
     def getSelectedVariables(self):
         V = self.opciones['variables']['V'].get()
@@ -129,6 +150,11 @@ class ProgramGUIVariables:
     def getComboboxInfo(self):
         return self.opciones['dropdown'].get()
         
+    def getBarraProgreso(self):
+        return self.barraProgreso
+    
+    def getCargandoLabel(self):
+        return self.cargandoLabel
 
 @dataclass
 class Solution:
@@ -185,13 +211,16 @@ class Solution:
     def equation2(self, t, u, v):
         return self.a*(self.b*v - u)
 
-    def solveEulerForward(self):
-        return eulerAdelante(-65.0, -14.0, 0.0, self.tiempoSimulacion, 0.01, self.equation1, self.equation2, self) 
+    def solveEulerForward(self, v0=-65.0, u0=-14.0):
+        return eulerAdelante(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.equation1, self.equation2, self) 
 
     # Euler hacia atrás: Despejar función
 
-    def solveRungeKutta2(self):
-        return rungeKutta2(-65.0, -14.0, 0.0, self.tiempoSimulacion, 0.01, self.equation1, self.equation2, self)
+    def solveRungeKutta2(self, v0=-65.0, u0=-14.0):
+        return rungeKutta2(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.equation1, self.equation2, self)
+
+    def solveRungeKutta4(self, v0=-65.0, u0=-14.0):
+        return rungeKutta4(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.equation1, self.equation2, self)
 
 @dataclass
 class SaveData:

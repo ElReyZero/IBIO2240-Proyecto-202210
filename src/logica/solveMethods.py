@@ -69,3 +69,45 @@ def rungeKutta2(v0:float, u0:float, t0:float, tf:float, h:float, f1, f2, solutio
             urk2[i] = urk2[i-1] + solution.d
 
     return vectorT, vrk2, urk2
+
+
+def rungeKutta4(v0:float, u0:float, t0:float, tf:float, h:float, f1, f2, solution)->tuple:
+    """Función que calcula la solución de una ecuación diferencial mediante el método de Runge-Kutta2.
+
+    Args:
+        y0 (float): Valor inicial de la función.
+        t0 (float): Valor inicial del tiempo.
+        tf (float): Valor final del tiempo.
+        h (float): Incremento de tiempo.
+        f1 (_type_): Función que representa la ecuación diferencial.
+
+    Returns:
+        tuple: Tupla con los valores de la función en cada instante de tiempo.
+    """   
+
+    vectorT = np.arange(t0, tf+h, h)
+    vrk4 = np.zeros(len(vectorT))
+    vrk4[0] = v0
+
+    urk4 = np.zeros(len(vectorT))
+    urk4[0] = u0
+
+    for i in range(1, len(vectorT)):
+
+        if vrk4[i-1] <= 30:
+            k1 = f1(vectorT[i-1], vrk4[i-1], urk4[i-1])
+            k2 = f1(vectorT[i-1] + 0.5*h, vrk4[i-1] + 0.5*h*k1, urk4[i-1] + 0.5*h*k1)
+            k3 = f1(vectorT[i-1] + 0.5*h, vrk4[i-1] + 0.5*h*k2, urk4[i-1] + 0.5*h*k2)
+            k4 = f1(vectorT[i-1] + h, vrk4[i-1] + h*k3, urk4[i-1] + h*k3)
+            vrk4[i] = vrk4[i-1] + (h/6) * (k1+2*k2+2*k3+k4)
+
+            k5 = f2(vectorT[i-1], urk4[i-1], vrk4[i-1])
+            k6 = f2(vectorT[i-1] + 0.5*h, urk4[i-1] + 0.5*h*k5, vrk4[i-1] + 0.5*h*k5)
+            k7 = f2(vectorT[i-1] + 0.5*h, urk4[i-1] + 0.5*h*k6, vrk4[i-1] + 0.5*h*k6)
+            k8 = f2(vectorT[i-1] + h, urk4[i-1] + h*k7, vrk4[i-1] + h*k7)
+            urk4[i] = urk4[i-1] + (h/6) * (k5+2*k6+2*k7+k8)
+        else:
+            vrk4[i] = solution.c
+            urk4[i] = urk4[i-1] + solution.d
+
+    return vectorT, vrk4, urk4

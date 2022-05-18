@@ -3,6 +3,7 @@ from pathlib import Path
 path = str(Path(Path(__file__).parent.absolute()).parent.absolute())
 sys.path.insert(0, path)
 from tkinter import Tk, Label, Button
+from tkinter.ttk import Progressbar
 from tkinter.messagebox import showerror, showinfo
 from frameOpciones import frameOpciones
 from frameSimulacion import frameSimulacion
@@ -43,8 +44,8 @@ def main():
     datosInterfaz.setMatplotlib(canvas, subplot)
 
     # Crear el frame de las opciones
-    metodo1Var, metodo2Var, metodo3Var, metodo4Var, metodo5Var, variableV, variableU, paramABox, paramBBox, paramCBox, paramDBox, dropdown = frameOpciones(ventana)
-    datosInterfaz.setMetodos(metodo1Var, metodo2Var, metodo3Var, metodo4Var, metodo5Var)
+    metodo1Var, metodo2Var, metodo3Var, metodo4Var, metodo5Var, metodo6var, variableV, variableU, paramABox, paramBBox, paramCBox, paramDBox, dropdown = frameOpciones(ventana)
+    datosInterfaz.setMetodos(metodo1Var, metodo2Var, metodo3Var, metodo4Var, metodo5Var, metodo6var)
     datosInterfaz.setVariables(variableV, variableU)
     datosInterfaz.setParametros(paramABox, paramBBox, paramCBox, paramDBox)
     datosInterfaz.setDropdownOpciones(dropdown)
@@ -74,8 +75,18 @@ def main():
     botonExportar = Button(ventana, text="Exportar", command=guardarDatos, height=2, width=20)
     botonExportar.place(x=1010, y=700)
 
+    # Crear una barra de progreso
+    barra = Progressbar(ventana, orient="horizontal", length=200, mode="determinate", maximum=6)
+    datosInterfaz.setBarraProgreso(barra)
+    barra.place(x=10, y=780)
+
+    # Crear una variable de texto para indicar la carga
+    cargando = Label(ventana, text="", font=("Segoe UI", 10), width=20, height=1, anchor='w')
+    cargando.place(x=210, y=775)
+    datosInterfaz.setCargandoLabel(cargando)
     # Sobreescribir el método de atrapada de excepciones por defecto
     Tk.report_callback_exception = report_callback_exception
+    datosInterfaz.setVentana(ventana)
     ventana.mainloop()
 
 def guardarDatos():

@@ -1,11 +1,11 @@
 from .classes import Solution, SaveData
 from .exceptions import InvalidParameters
 from  datetime import datetime
-
+import time
 # Variable global que almacena la última gráfica por si se quiere guardar
 LATEST_PLOT= None
 
-def graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4):
+def graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4, solveIVP, v0=-65.0, u0=-14.0):
     """ Función auxiliar que grafica la entrada de la interfaz
     """
 
@@ -23,17 +23,28 @@ def graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerMo
     uRK2 = None
     vRK4 = None
     uRK4 = None
+    vIVP = None
+    uIVP = None
+    
+    contador = 0
+
+    ventana = carga[0]
+    barra = carga[1]
+    cargandoLabel = carga[2]
+    cargandoLabel.config(text="Cargando...")
 
     if eulerAdelante:
-        tiempo, vFor, uFor = solucion.solveEulerForward()
+        tiempo, vFor, uFor = solucion.solveEulerForward(v0=v0, u0=u0)
         if V:
             subplot.plot(tiempo, vFor, label='Euler Adelante - V(t)')
         if U:
             subplot.plot(tiempo, uFor, label='Euler Adelante - U(t)')
         if not V and not U:
             raise InvalidParameters("Es necesario seleccionar una función para resolver")
+        barra.step()
+        ventana.update()
+        contador += 1
     if eulerAtras:
-        pass
         #tiempo, vBack, uBack = solucion.solveEulerBackward()
         #if V:
             #subplot.plot(tiempo, vBack, label='Euler Atras - V(t)')
@@ -41,8 +52,10 @@ def graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerMo
             #subplot.plot(tiempo, uBack, label='Euler Atras - U(t)')
         #if not V and not U:
             #raise InvalidParameters("Es necesario seleccionar una función para resolver")
+        barra.step()
+        ventana.update()
+        contador += 1
     if eulerModificado:
-        pass
         #tiempo, vMod, uMod = solucion.solveEulerModified()
         #if V:
             #subplot.plot(tiempo, vMod, label='Euler Modificado - V(t)')
@@ -50,27 +63,55 @@ def graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerMo
             #subplot.plot(tiempo, uMod, label='Euler Modificado - U(t)')
         #if not V and not U:
             #raise InvalidParameters("Es necesario seleccionar una función para resolver")
+        barra.step()
+        ventana.update()
+        contador += 1
     if rungeKutta2:
-        tiempo, vRK2, uRK2 = solucion.solveRungeKutta2()
+        tiempo, vRK2, uRK2 = solucion.solveRungeKutta2(v0=v0, u0=u0)
         if V:
             subplot.plot(tiempo, vRK2, label='Runge Kutta 2 - V(t)')
         if U:
             subplot.plot(tiempo, uRK2, label='Runge Kutta 2 - U(t)')
         if not V and not U:
             raise InvalidParameters("Es necesario seleccionar una función para resolver")
+        barra.step()
+        ventana.update()
+        contador += 1
     if rungeKutta4:
-        pass
-        #tiempo, vRK4, uRK4 = solucion.solveRungeKutta4()
+        tiempo, vRK4, uRK4 = solucion.solveRungeKutta4(v0=v0, u0=u0)
+        if V:
+            subplot.plot(tiempo, vRK4, label='Runge Kutta 4 - V(t)')
+        if U:
+            subplot.plot(tiempo, uRK4, label='Runge Kutta 4 - U(t)')
+        if not V and not U:
+            raise InvalidParameters("Es necesario seleccionar una función para resolver")
+        barra.step()
+        ventana.update()
+        contador += 1
+    if solveIVP:
+        #tiempo, uIVP, vIVP = solucion.solveIVP()
         #if V:
-            #subplot.plot(tiempo, vRK4, label='Runge Kutta 4 - V(t)')
+            #subplot.plot(tiempo, vIVP, label='Solve IVP - V(t)')
         #if U:
-            #subplot.plot(tiempo, uRK4, label='Runge Kutta 4 - U(t)')
+            #subplot.plot(tiempo, uIVP, label='Solve IVP - U(t)')
         #if not V and not U:
             #raise InvalidParameters("Es necesario seleccionar una función para resolver")
-    if not eulerAdelante and not eulerAtras and not eulerModificado and not rungeKutta2 and not rungeKutta4:
+        barra.step()
+        ventana.update()
+        contador += 1
+    if not eulerAdelante and not eulerAtras and not eulerModificado and not rungeKutta2 and not rungeKutta4 and not solveIVP:
         raise InvalidParameters("No se seleccionó ningún método")
+
+    if not contador == 6:
+        for _ in range(contador, 5):
+            barra.step()
+            ventana.update()
+            time.sleep(0.01)
     subplot.legend()
     canvas.draw()
+    barra.step()
+    ventana.update()
+    cargandoLabel.config(text="")
 
     # Se guarda la gráfica en una variable por si el usuario la quiere persistir
     global LATEST_PLOT
@@ -108,6 +149,7 @@ def simular(datos):
     eulerAdelante = metodos[2]
     eulerAtras = metodos[3]
     eulerModificado = metodos[4]
+    solveIVP = metodos[5]
 
     # Se obtienen las variables seleccionadas por el usuario
     variables = datos.getSelectedVariables()
@@ -128,13 +170,18 @@ def simular(datos):
     c = params[2]
     d = params[3]
 
+    carga = list()
+    carga.append(datos.getVentana())
+    carga.append(datos.getBarraProgreso())
+    carga.append(datos.getCargandoLabel())
+
     # Se revisa el si el usuario eligió alguna configuración predeterminada o no
     if defaultParams == 'None' or defaultParams == "":
         # Se crea una instancia de la clase Solution con los valores obtenidos
         solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
         
         # Se grafica la solución
-        graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4)
+        graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4, solveIVP)
         
     elif defaultParams == 'Regular Spiking':
         # Se ejecuta una simulación con el ajuste predeterminado de Regular Spiking
@@ -144,7 +191,7 @@ def simular(datos):
         # Se crea una instancia de la clase Solution con los valores obtenidos
         solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
         # Se grafica la solución
-        graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4)
+        graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4, solveIVP)
     elif defaultParams == 'Intrinsic Bursting':
         # Se ejecuta una simulación con el ajuste predeterminado de Intrinsic Bursting
         c = -55.0
@@ -152,7 +199,7 @@ def simular(datos):
 
         # Se crea una instancia de la clase Solution con los valores obtenidos
         solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
-        graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4)
+        graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4, solveIVP)
 
     elif defaultParams == 'Chattering':
         # Se ejecuta una simulación con el ajuste predeterminado de Chattering
@@ -162,21 +209,26 @@ def simular(datos):
         # Se crea una instancia de la clase Solution con los valores obtenidos
         solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
 
-        graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4)
+        graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4, solveIVP)
     elif defaultParams == 'Fast Spiking':
         # Se ejecuta una simulación con el ajuste predeterminado de Fast Spiking
         a = 0.1
 
         # Se crea una instancia de la clase Solution con los valores obtenidos
         solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
-        graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4)
+        graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4, solveIVP)
     elif defaultParams == 'Talamo-Cortical':
         # Se ejecuta una simulación con el ajuste predeterminado de Talamo-Cortical
-        valorEstimulacion = -60.0
-
         # Se crea una instancia de la clase Solution con los valores obtenidos
+
+        # Si la corriente suministrada es positiva, v está cerca de -60mV, de lo contrario, se acerca a -90mV
+        if valorEstimulacion > 0:
+            v = -60.0
+        else:
+            v = -90.0
+
         solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
-        graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4)
+        graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4, solveIVP, v0=v)
     elif defaultParams == 'Resonador':
         # Se ejecuta una simulación con el ajuste predeterminado de Resonador
         a = 0.1
@@ -184,7 +236,7 @@ def simular(datos):
 
         # Se crea una instancia de la clase Solution con los valores obtenidos
         solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
-        graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4)
+        graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4, solveIVP)
 
     else:
         raise InvalidParameters("El valor predeterminado elegido no es válido")

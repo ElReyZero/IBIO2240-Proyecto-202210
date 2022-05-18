@@ -31,6 +31,10 @@ def frameOpciones(ventana):
     metodo5 = Checkbutton(frameOpciones, text="Euler Modificado", variable=metodo5Var, font=("Segoe UI Semibold", 12))
     metodo5.place(x=0, y=150)
 
+    metodo6Var = BooleanVar()
+    metodo6 = Checkbutton(frameOpciones, text="Solve IVP", variable=metodo6Var, font=("Segoe UI Semibold", 12))
+    metodo6.place(x=0, y=180)
+
     # Crear labels de las variables
     labelGeneral = Label(frameOpciones, text="Variables:", font=("Segoe UI", 12))
     labelGeneral.place(x=230, y=0)
@@ -85,4 +89,4 @@ def frameOpciones(ventana):
     dropdown.place(x=380, y=30)
 
     # Retornar todas las variables
-    return metodo1Var, metodo2Var, metodo3Var, metodo4Var, metodo5Var, variableV, variableU, paramABox, paramBBox, paramCBox, paramDBox, dropdown
+    return metodo1Var, metodo2Var, metodo3Var, metodo4Var, metodo5Var, metodo6Var, variableV, variableU, paramABox, paramBBox, paramCBox, paramDBox, dropdown
