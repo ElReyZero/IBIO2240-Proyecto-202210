@@ -6,6 +6,9 @@ from  datetime import datetime
 LATEST_PLOT= None
 
 def graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4):
+    """ Función auxiliar que grafica la entrada de la interfaz
+    """
+
     # Se limpia el canvas
     subplot.clear()
 
@@ -77,10 +80,18 @@ def graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerMo
 
 
 def createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion):
+    """ Función auxiliar que crea una solución, la revisa y devuelve su clase y el canvas de la interfaz
+    """
+
     # Se crea una instancia de la clase Solution con los valores obtenidos
     solucion = Solution(a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
+    # Se pasan y revisan los parámetros a, b, c y d a números flotantes
     solucion.paramsToFloat()
+
+    # Se revisa que los parámetros de tiempo sean válidos
     solucion.checkTimeValidity()
+    
+    # Se obtienen el canvas y subplot de la interfaz
     canvas, subplot = datos.getMatplotlib()
     return solucion, canvas, subplot
 
@@ -118,8 +129,8 @@ def simular(datos):
     c = params[2]
     d = params[3]
 
+    # Se revisa el si el usuario eligió alguna configuración predeterminada o no
     if defaultParams == 'None' or defaultParams == "":
-        
         # Se crea una instancia de la clase Solution con los valores obtenidos
         solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
         
@@ -185,22 +196,22 @@ def simular(datos):
 
     # Para evitar overflow de la tabla se revisa si llegó a su máximo tamaño
     if tablaSize <8:
-        if tablaSize % 2 == 0:
-            tabla.insert("", "end", values=(tiempoInicio, tiempoFinal, valorEstimulacion), tags=('evenrow',))
-
-        else:
-            tabla.insert("", "end", values=(tiempoInicio, tiempoFinal, valorEstimulacion), tags=('oddrow',)) 
         tablaSize += 1
         datos.setTablaSize(tablaSize)
+        if tablaSize % 2 == 0:
+            tabla.insert("", "end", text=tablaSize, values=(tiempoInicio, tiempoFinal, valorEstimulacion), tags=('evenrow',))
+
+        else:
+            tabla.insert("", "end", text=tablaSize, values=(tiempoInicio, tiempoFinal, valorEstimulacion), tags=('oddrow',)) 
         tabla.config(height=tablaSize)
         datos.setTablaRecordedDataAmount(tablaSize)
     else:
         tabla.delete(tabla.get_children()[0])
         cantidadDatos = datos.getTablaRecordedDataAmount()
         if cantidadDatos % 2 == 0:
-            tabla.insert("", "end", values=(tiempoInicio, tiempoFinal, valorEstimulacion), tags=('evenrow',))
+            tabla.insert("", "end", text=cantidadDatos+1, values=(tiempoInicio, tiempoFinal, valorEstimulacion), tags=('oddrow',))
         else:
-            tabla.insert("", "end", values=(tiempoInicio, tiempoFinal, valorEstimulacion), tags=('oddrow',)) 
+            tabla.insert("", "end", text=cantidadDatos+1, values=(tiempoInicio, tiempoFinal, valorEstimulacion), tags=('evenrow',)) 
         datos.setTablaRecordedDataAmount(cantidadDatos + 1)
 
 

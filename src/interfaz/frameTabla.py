@@ -12,31 +12,21 @@ def frameTabla(ventana):
     style.configure("Treeview", rowheight=25)
     
     tabla = ttk.Treeview(frameTabla)
+    tabla.grid(row=1,column=1,columnspan=4,padx=20,pady=20)
     tabla['columns'] = ('inicial', 'final', 'estimulacion')
-    
-    tabla.column("#0", width=0, stretch=NO)
+
+    tabla.column("#0", width=50, stretch=NO)
     tabla.column("inicial", anchor=CENTER, width=160)
     tabla.column("final", anchor=CENTER, width=160)
     tabla.column("estimulacion", anchor=CENTER, width=160)
 
-    tabla.heading("#0", text="", anchor=CENTER)
+    tabla.heading("#0", text="#", anchor=CENTER)
     tabla.heading("inicial", text="T inicial (ms)", anchor=CENTER)
     tabla.heading("final", text="T final (ms)", anchor=CENTER)
     tabla.heading("estimulacion", text="Estimulación (mA)", anchor=CENTER)
-    
+
     tabla.tag_configure('oddrow', background='#f0f0f0')
     tabla.tag_configure('evenrow', background='#e1e1e1')
-
-    """ global count
-    count = 0
-    for record in data:
-        if count % 2 == 0:
-            tabla.insert(parent="", index="end", iid=count, text="", values=(record[0], record[1], record[2]), tags=('evenrow',))
-
-        else:
-            tabla.insert(parent="", index="end", iid=count, text="", values=(record[0], record[1], record[2]), tags=('oddrow',))
-        
-        count += 1"""
 
     tabla.place(x=60, y=0)
     tabla.config(height=0)

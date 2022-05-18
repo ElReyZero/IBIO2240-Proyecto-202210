@@ -75,6 +75,5 @@ def frameSimulacion(ventana, datosInterfaz):
 
 
 def cargarArchivo(datosInterfaz):
-    #TODO Hallar la forma de pasar el subplot como parámetro
     filename = filedialog.askopenfilename(initialdir = "./",title = "Select file",filetypes = (("bin files","*.bin"),("all files","*.*")))
     cargarDatos(filename, datosInterfaz)
