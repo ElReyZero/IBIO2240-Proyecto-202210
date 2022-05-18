@@ -161,6 +161,17 @@ class Solution:
         except ValueError:
             raise InvalidParameters("Los parámetros a, b, c y d deben ser números")
 
+    def checkTimeValidity(self):
+        """Función auxiliar que revisa que el tiempo de simulación sea válido"""
+        if self.tiempoSimulacion <= 0:
+            raise InvalidParameters("El tiempo de simulación debe ser mayor a 0")
+        elif self.tiempoInicio < 0 or self.tiempoFinal < 0:
+            raise InvalidParameters("El tiempo de inicio y final debe ser mayor o igual a 0")
+        elif self.tiempoInicio >= self.tiempoFinal:
+            raise InvalidParameters("El tiempo de inicio debe ser menor al tiempo final")
+        elif self.tiempoInicio >= self.tiempoSimulacion:
+            raise InvalidParameters("El tiempo de inicio debe ser menor al tiempo de simulación")
+
     def I(self, t):
         if t > self.tiempoInicio and self.tiempoFinal < 600:
             I = self.valorEstimulacion

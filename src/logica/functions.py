@@ -76,8 +76,13 @@ def graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerMo
     
 
 
-
-
+def createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion):
+    # Se crea una instancia de la clase Solution con los valores obtenidos
+    solucion = Solution(a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
+    solucion.paramsToFloat()
+    solucion.checkTimeValidity()
+    canvas, subplot = datos.getMatplotlib()
+    return solucion, canvas, subplot
 
 def simular(datos):
     """
@@ -116,9 +121,7 @@ def simular(datos):
     if defaultParams == 'None' or defaultParams == "":
         
         # Se crea una instancia de la clase Solution con los valores obtenidos
-        solucion = Solution(a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
-        solucion.paramsToFloat()
-        canvas, subplot = datos.getMatplotlib()
+        solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
         
         # Se grafica la solución
         graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4)
@@ -129,10 +132,8 @@ def simular(datos):
         d = 8.0
 
         # Se crea una instancia de la clase Solution con los valores obtenidos
-        solucion = Solution(a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
-        solucion.paramsToFloat()
-
-        canvas, subplot = datos.getMatplotlib()
+        solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
+        # Se grafica la solución
         graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4)
     elif defaultParams == 'Intrinsic Bursting':
         # Se ejecuta una simulación con el ajuste predeterminado de Intrinsic Bursting
@@ -140,41 +141,31 @@ def simular(datos):
         d = 4.0
 
         # Se crea una instancia de la clase Solution con los valores obtenidos
-        solucion = Solution(a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
-        solucion.paramsToFloat()
-
-        canvas, subplot = datos.getMatplotlib()
+        solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
         graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4)
+
     elif defaultParams == 'Chattering':
         # Se ejecuta una simulación con el ajuste predeterminado de Chattering
         c = -50.0
         d = 2.0
 
         # Se crea una instancia de la clase Solution con los valores obtenidos
-        solucion = Solution(a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
-        solucion.paramsToFloat()
+        solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
 
-        canvas, subplot = datos.getMatplotlib()
         graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4)
     elif defaultParams == 'Fast Spiking':
         # Se ejecuta una simulación con el ajuste predeterminado de Fast Spiking
         a = 0.1
 
         # Se crea una instancia de la clase Solution con los valores obtenidos
-        solucion = Solution(a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
-        solucion.paramsToFloat()
-
-        canvas, subplot = datos.getMatplotlib()
+        solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
         graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4)
     elif defaultParams == 'Talamo-Cortical':
         # Se ejecuta una simulación con el ajuste predeterminado de Talamo-Cortical
         valorEstimulacion = -60.0
 
         # Se crea una instancia de la clase Solution con los valores obtenidos
-        solucion = Solution(a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
-        solucion.paramsToFloat()
-
-        canvas, subplot = datos.getMatplotlib()
+        solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
         graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4)
     elif defaultParams == 'Resonador':
         # Se ejecuta una simulación con el ajuste predeterminado de Resonador
@@ -182,10 +173,7 @@ def simular(datos):
         b = 0.26
 
         # Se crea una instancia de la clase Solution con los valores obtenidos
-        solucion = Solution(a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
-        solucion.paramsToFloat()
-
-        canvas, subplot = datos.getMatplotlib()
+        solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
         graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4)
 
     else:
