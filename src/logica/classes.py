@@ -208,7 +208,7 @@ class Solution:
     def equation1(self, t, v, u):
         return (0.04*v**2) + 5*v + 140 - u + self.I(t)
 
-    def equation2(self, t, u, v):
+    def equation2(self, u, v):
         return self.a*(self.b*v - u)
 
     def solveEulerForward(self, v0=-65.0, u0=-14.0):
