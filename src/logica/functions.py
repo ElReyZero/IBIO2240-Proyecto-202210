@@ -51,14 +51,13 @@ def graficar(solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerMo
         #if not V and not U:
             #raise InvalidParameters("Es necesario seleccionar una función para resolver")
     if rungeKutta2:
-        pass
-        #tiempo, vRK2, uRK2 = solucion.solveRungeKutta2()
-        #if V:
-            #subplot.plot(tiempo, vRK2, label='Runge Kutta 2 - V(t)')
-        #if U:
-            #subplot.plot(tiempo, uRK2, label='Runge Kutta 2 - U(t)')
-        #if not V and not U:
-            #raise InvalidParameters("Es necesario seleccionar una función para resolver")
+        tiempo, vRK2, uRK2 = solucion.solveRungeKutta2()
+        if V:
+            subplot.plot(tiempo, vRK2, label='Runge Kutta 2 - V(t)')
+        if U:
+            subplot.plot(tiempo, uRK2, label='Runge Kutta 2 - U(t)')
+        if not V and not U:
+            raise InvalidParameters("Es necesario seleccionar una función para resolver")
     if rungeKutta4:
         pass
         #tiempo, vRK4, uRK4 = solucion.solveRungeKutta4()

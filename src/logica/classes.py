@@ -1,4 +1,4 @@
-from .solveMethods import eulerAdelante
+from .solveMethods import eulerAdelante, rungeKutta2
 from dataclasses import dataclass
 from .exceptions import InvalidParameters
 import pickle
@@ -189,6 +189,9 @@ class Solution:
         return eulerAdelante(-65.0, -14.0, 0.0, self.tiempoSimulacion, 0.01, self.equation1, self.equation2, self) 
 
     # Euler hacia atrás: Despejar función
+
+    def solveRungeKutta2(self):
+        return rungeKutta2(-65.0, -14.0, 0.0, self.tiempoSimulacion, 0.01, self.equation1, self.equation2, self)
 
 @dataclass
 class SaveData:
