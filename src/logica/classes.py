@@ -1,4 +1,4 @@
-from .solveMethods import eulerAdelante, rungeKutta2, rungeKutta4
+from .solveMethods import eulerAdelante, rungeKutta2, rungeKutta4, solveIVP
 from dataclasses import dataclass
 from .exceptions import InvalidParameters
 import pickle
@@ -205,22 +205,29 @@ class Solution:
             I = 0.0
         return I
 
-    def equation1(self, t, v, u):
+    def functionV(self, t, v, u):
         return (0.04*v**2) + 5*v + 140 - u + self.I(t)
 
-    def equation2(self, u, v):
+    def functionU(self, u, v):
         return self.a*(self.b*v - u)
 
+    def FSystem(self, t, y):
+        return [self.functionV(t, y[0], y[1]), self.functionU(y[1], y[0])]
+
     def solveEulerForward(self, v0=-65.0, u0=-14.0):
-        return eulerAdelante(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.equation1, self.equation2, self) 
+        return eulerAdelante(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.functionV, self.functionU, self) 
 
     # Euler hacia atrás: Despejar función
+    # Euler modificado: Despejar función
 
     def solveRungeKutta2(self, v0=-65.0, u0=-14.0):
-        return rungeKutta2(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.equation1, self.equation2, self)
+        return rungeKutta2(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.functionV, self.functionU, self)
 
     def solveRungeKutta4(self, v0=-65.0, u0=-14.0):
-        return rungeKutta4(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.equation1, self.equation2, self)
+        return rungeKutta4(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.functionV, self.functionU, self)
+
+    def solveIVP(self, v0=-65.0, u0=-14.0):
+        return solveIVP(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.FSystem)
 
 @dataclass
 class SaveData:
@@ -228,6 +235,7 @@ class SaveData:
     Clase para guardar los datos de una gráfica en un archivo bin.
     """
     tiempo : np.array
+    tiempoIVP : np.array
     vFor : np.array
     uFor : np.array
     vBack : np.array
@@ -238,6 +246,8 @@ class SaveData:
     uRK2 : np.array
     vRK4 : np.array
     uRK4 : np.array
+    vIVP : np.array
+    uIVP : np.array
 
     def save(self, fileName):
         pickle.dump(self, open(fileName, 'wb'), pickle.HIGHEST_PROTOCOL)
@@ -248,7 +258,7 @@ class SaveData:
         return data
 
     def asList(self):
-        return [self.tiempo, self.vFor, self.uFor, self.vBack, self.uBack, self.vMod, self.uMod, self.vRK2, self.uRK2, self.vRK4, self.uRK4]
+        return [self.tiempo, self.tiempoIVP, self.vFor, self.uFor, self.vBack, self.uBack, self.vMod, self.uMod, self.vRK2, self.uRK2, self.vRK4, self.uRK4, self.vIVP, self.uIVP]
     
     def asDict(self):
-        return {'tiempo': self.tiempo, 'vFor': self.vFor, 'uFor': self.uFor, 'vBack': self.vBack, 'uBack': self.uBack, 'vMod': self.vMod, 'uMod': self.uMod, 'vRK2': self.vRK2, 'uRK2': self.uRK2, 'vRK4': self.vRK4, 'uRK4': self.uRK4}
+        return {'tiempo': self.tiempo, 'vFor': self.vFor, 'uFor': self.uFor, 'vBack': self.vBack, 'uBack': self.uBack, 'vMod': self.vMod, 'uMod': self.uMod, 'vRK2': self.vRK2, 'uRK2': self.uRK2, 'vRK4': self.vRK4, 'uRK4': self.uRK4, 'vIVP': self.vIVP, 'uIVP': self.uIVP}

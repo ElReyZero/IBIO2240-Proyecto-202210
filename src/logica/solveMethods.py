@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.integrate as inte
 
 def eulerAdelante(v0:float, u0:float, t0:float, tf:float, h:float, f1, f2, solution)->tuple:
     """Función que calcula la solución de una ecuación diferencial mediante el método de Euler Adelante.
@@ -58,11 +59,11 @@ def rungeKutta2(v0:float, u0:float, t0:float, tf:float, h:float, f1, f2, solutio
 
         if vrk2[i-1] <= 30:
             k1 = f1(vectorT[i-1], vrk2[i-1], urk2[i-1])
-            k2 = f1(vectorT[i-1] + h, vrk2[i-1] + h * k1, urk2[i-1] + h * k1)
-            vrk2[i] = vrk2[i-1] + (h/2) * (k1 + k2)
-
             k3 = f2(urk2[i-1], vrk2[i-1])
-            k4 = f2(urk2[i-1] + h * k3, vrk2[i-1] + h * k3)
+            k2 = f1(vectorT[i-1] + h, vrk2[i-1] + h * k3, urk2[i-1] + h * k1)
+            k4 = f2(urk2[i-1] + h * k1, vrk2[i-1] + h * k3)
+
+            vrk2[i] = vrk2[i-1] + (h/2) * (k1 + k2)
             urk2[i] = urk2[i-1] + (h/2) * (k3 + k4)
         else:
             vrk2[i] = solution.c
@@ -95,13 +96,15 @@ def rungeKutta4(v0:float, u0:float, t0:float, tf:float, h:float, f1, f2, solutio
     for i in range(1, len(vectorT)):
 
         if vrk4[i-1] <= 30:
+            # Arreglar
             k1 = f1(vectorT[i-1], vrk4[i-1], urk4[i-1])
-            k2 = f1(vectorT[i-1] + 0.5*h, vrk4[i-1] + 0.5*h*k1, urk4[i-1] + 0.5*h*k1)
-            k3 = f1(vectorT[i-1] + 0.5*h, vrk4[i-1] + 0.5*h*k2, urk4[i-1] + 0.5*h*k2)
-            k4 = f1(vectorT[i-1] + h, vrk4[i-1] + h*k3, urk4[i-1] + h*k3)
+            k5 = f2(urk4[i-1], vrk4[i-1])
+
+            k2 = f1(vectorT[i-1] + 0.5*h, vrk4[i-1] + 0.5*h*k5, urk4[i-1] + 0.5*h*k1)
+            k3 = f1(vectorT[i-1] + 0.5*h, vrk4[i-1] + 0.5*h*k5, urk4[i-1] + 0.5*h*k1)
+            k4 = f1(vectorT[i-1] + h, vrk4[i-1] + h*k5, urk4[i-1] + h*k1)
             vrk4[i] = vrk4[i-1] + (h/6) * (k1+2*k2+2*k3+k4)
 
-            k5 = f2(urk4[i-1], vrk4[i-1])
             k6 = f2(urk4[i-1] + 0.5*h*k5, vrk4[i-1] + 0.5*h*k5)
             k7 = f2(urk4[i-1] + 0.5*h*k6, vrk4[i-1] + 0.5*h*k6)
             k8 = f2(urk4[i-1] + h*k7, vrk4[i-1] + h*k7)
@@ -111,3 +114,8 @@ def rungeKutta4(v0:float, u0:float, t0:float, tf:float, h:float, f1, f2, solutio
             urk4[i] = urk4[i-1] + solution.d
 
     return vectorT, vrk4, urk4
+
+def solveIVP(v0, u0, t0, tf, h, FSystem):
+    vectorT = np.arange(t0, tf+h, h)
+    solivp = inte.solve_ivp(FSystem, [t0, tf], [v0, u0], t_eval=vectorT, method='RK45')
+    return solivp

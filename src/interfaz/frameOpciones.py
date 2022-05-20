@@ -12,11 +12,11 @@ def frameOpciones(ventana):
     labelGeneral.place(x=0, y=0)
     
     metodo1Var = BooleanVar()
-    metodo1 = Checkbutton(frameOpciones, text="Range Kutta 2", variable=metodo1Var, font=("Segoe UI Semibold", 12))
+    metodo1 = Checkbutton(frameOpciones, text="Runge Kutta 2", variable=metodo1Var, font=("Segoe UI Semibold", 12))
     metodo1.place(x=0, y=30)
 
     metodo2Var = BooleanVar()
-    metodo2 = Checkbutton(frameOpciones, text="Range Kutta 4", variable=metodo2Var, font=("Segoe UI Semibold", 12))
+    metodo2 = Checkbutton(frameOpciones, text="Runge Kutta 4", variable=metodo2Var, font=("Segoe UI Semibold", 12))
     metodo2.place(x=0, y=60)
 
     metodo3Var = BooleanVar()

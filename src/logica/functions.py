@@ -2,6 +2,7 @@ from .classes import Solution, SaveData
 from .exceptions import InvalidParameters
 from  datetime import datetime
 import time
+from tkinter.messagebox import showinfo
 # Variable global que almacena la última gráfica por si se quiere guardar
 LATEST_PLOT= None
 
@@ -25,7 +26,7 @@ def graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, 
     uRK4 = None
     vIVP = None
     uIVP = None
-    
+    tiempoIVP = None
     contador = 0
 
     ventana = carga[0]
@@ -89,16 +90,20 @@ def graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, 
         ventana.update()
         contador += 1
     if solveIVP:
-        #tiempo, uIVP, vIVP = solucion.solveIVP()
-        #if V:
-            #subplot.plot(tiempo, vIVP, label='Solve IVP - V(t)')
-        #if U:
-            #subplot.plot(tiempo, uIVP, label='Solve IVP - U(t)')
-        #if not V and not U:
-            #raise InvalidParameters("Es necesario seleccionar una función para resolver")
+        respuestaSolve = solucion.solveIVP()
+        tiempoIVP = respuestaSolve.t
+        vIVP = respuestaSolve.y[0]
+        uIVP = respuestaSolve.y[1]
+        if V:
+            subplot.plot(tiempoIVP, vIVP, label='Solve IVP - V(t)')
+        if U:
+            subplot.plot(tiempoIVP, uIVP, label='Solve IVP - U(t)')
+        if not V and not U:
+            raise InvalidParameters("Es necesario seleccionar una función para resolver")
         barra.step()
         ventana.update()
         contador += 1
+        showinfo("Solve IVP", "El método de Solve IVP no fue implementado con las restricciones del problema en mente, por lo que el resultado se verá alejado de la solución real")
     if not eulerAdelante and not eulerAtras and not eulerModificado and not rungeKutta2 and not rungeKutta4 and not solveIVP:
         raise InvalidParameters("No se seleccionó ningún método")
 
@@ -115,9 +120,8 @@ def graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, 
 
     # Se guarda la gráfica en una variable por si el usuario la quiere persistir
     global LATEST_PLOT
-    LATEST_PLOT = SaveData(tiempo, vFor, uFor, vBack, uBack, vMod, uMod, vRK2, uRK2, vRK4, uRK4)
-    
-
+    LATEST_PLOT = SaveData(tiempo, tiempoIVP, vFor, uFor, vBack, uBack, vMod, uMod, vRK2, uRK2, vRK4, uRK4, vIVP, uIVP)
+    del tiempo, vFor, uFor, vBack, uBack, vMod, uMod, vRK2, uRK2, vRK4, uRK4, vIVP, uIVP
 
 def createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion):
     """ Función auxiliar que crea una solución, la revisa y devuelve su clase y el canvas de la interfaz
@@ -286,13 +290,15 @@ def cargarDatos(fileName, datosInterfaz):
         interfaz = datosInterfaz.getMatplotlib()
         canvas = interfaz[0]
         subplot = interfaz[1]
-
+        tiempoIVP = listaCargada[1]
         # Se limpia el canvas
         subplot.clear()
-
-        for elemento in range(1, len(listaCargada)):
+        for elemento in range(2, len(listaCargada)):
             # Se grafica cada elemento que no sea nulo
-            if listaCargada[elemento] is not None:
+            if listaCargada[elemento] is not None and listaCargada[elemento].size == tiempo.size:
                 subplot.plot(tiempo, listaCargada[elemento])
+            # Se revisa que sea un método de solve ivp
+            elif listaCargada[elemento] is not None:
+                subplot.plot(tiempoIVP, listaCargada[elemento])
         canvas.draw()
 
