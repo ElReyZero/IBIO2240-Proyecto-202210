@@ -57,13 +57,13 @@ def graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, 
         ventana.update()
         contador += 1
     if eulerModificado:
-        #tiempo, vMod, uMod = solucion.solveEulerModified()
-        #if V:
-            #subplot.plot(tiempo, vMod, label='Euler Modificado - V(t)')
-        #if U:
-            #subplot.plot(tiempo, uMod, label='Euler Modificado - U(t)')
-        #if not V and not U:
-            #raise InvalidParameters("Es necesario seleccionar una función para resolver")
+        tiempo, vMod, uMod = solucion.solveEulerModified()
+        if V:
+            subplot.plot(tiempo, vMod, label='Euler Modificado - V(t)')
+        if U:
+            subplot.plot(tiempo, uMod, label='Euler Modificado - U(t)')
+        if not V and not U:
+            raise InvalidParameters("Es necesario seleccionar una función para resolver")
         barra.step()
         ventana.update()
         contador += 1

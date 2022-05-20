@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.integrate as inte
+import scipy.optimize as opt
 
 def eulerAdelante(v0:float, u0:float, t0:float, tf:float, h:float, f1, f2, solution)->tuple:
     """Función que calcula la solución de una ecuación diferencial mediante el método de Euler Adelante.
@@ -114,6 +115,28 @@ def rungeKutta4(v0:float, u0:float, t0:float, tf:float, h:float, f1, f2, solutio
             urk4[i] = urk4[i-1] + solution.d
 
     return vectorT, vrk4, urk4
+
+
+def eulerModificado(v0:float, u0:float, t0:float, tf:float, h:float, FEulerModRoot, solution)->tuple:
+    
+    vectorT = np.arange(t0, tf+h, h)
+    vEulerModRoot = np.zeros(len(vectorT))
+    vEulerModRoot[0] = v0
+
+    uEulerModRoot = np.zeros(len(vectorT))
+    uEulerModRoot[0] = u0
+
+    for i in range(1, len(vectorT)):
+        if vEulerModRoot[i-1] <= 30:
+            # Euler modificado resolviendo el sistema de ecuaciones no-lineales
+            SolMod = opt.fsolve(FEulerModRoot, np.array([vEulerModRoot[i - 1], uEulerModRoot[i - 1]]), (vectorT[i - 1], vectorT[i], vEulerModRoot[i - 1], uEulerModRoot[i - 1], h), xtol=10**-15)
+            vEulerModRoot[i] = SolMod[0]
+            uEulerModRoot[i] = SolMod[1]
+        else:
+            vEulerModRoot[i] = solution.c
+            uEulerModRoot[i] = uEulerModRoot[i-1] + solution.d
+
+    return vectorT, vEulerModRoot, uEulerModRoot
 
 def solveIVP(v0, u0, t0, tf, h, FSystem):
     vectorT = np.arange(t0, tf+h, h)
