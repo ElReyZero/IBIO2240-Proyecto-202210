@@ -96,21 +96,21 @@ def rungeKutta4(v0:float, u0:float, t0:float, tf:float, h:float, f1, f2, solutio
     urk4[0] = u0
 
     for i in range(1, len(vectorT)):
-
         if vrk4[i-1] <= 30:
             #TODO Arreglar coeficientes
-            k1 = f1(vectorT[i-1], vrk4[i-1], urk4[i-1])
-            k5 = f2(urk4[i-1], vrk4[i-1])
+            k11 = f1(vectorT[i-1], vrk4[i-1], urk4[i-1])
+            k21 = f2(urk4[i-1], vrk4[i-1])
 
-            k2 = f1(vectorT[i-1] + 0.5*h, vrk4[i-1] + 0.5*h*k5, urk4[i-1] + 0.5*h*k1)
-            k3 = f1(vectorT[i-1] + 0.5*h, vrk4[i-1] + 0.5*h*k5, urk4[i-1] + 0.5*h*k1)
-            k4 = f1(vectorT[i-1] + h, vrk4[i-1] + h*k5, urk4[i-1] + h*k1)
-            vrk4[i] = vrk4[i-1] + (h/6) * (k1+2*k2+2*k3+k4)
+            k12 = f1(vectorT[i-1] + 0.5*h, vrk4[i-1] + 0.5*h*k11, urk4[i-1] + 0.5*h*k21)
+            k22 = f2(vectorT[i-1] + 0.5*h, urk4[i-1] + 0.5*h*k21, vrk4[i-1] + 0.5*h*k12)
+            k13 = f1(vectorT[i-1] + h, vrk4[i-1] + h*k12, urk4[i-1] + h*k22)
+            
+            k23 = f2(urk4[i-1] + 0.5*h*k22, vrk4[i-1] + 0.5*h*k13)
+            k14 = f1(vectorT[i-1] + 0.5*h, vrk4[i-1] + 0.5*h*k13, urk4[i-1] + 0.5*h*k23)
+            k24 = f2(urk4[i-1] + h*k23, vrk4[i-1] + h*k14)
 
-            k6 = f2(urk4[i-1] + 0.5*h*k5, vrk4[i-1] + 0.5*h*k5)
-            k7 = f2(urk4[i-1] + 0.5*h*k6, vrk4[i-1] + 0.5*h*k6)
-            k8 = f2(urk4[i-1] + h*k7, vrk4[i-1] + h*k7)
-            urk4[i] = urk4[i-1] + (h/6) * (k5+2*k6+2*k7+k8)
+            vrk4[i] = vrk4[i-1] + (h/6) * (k11+2*k12+2*k13+k14)
+            urk4[i] = urk4[i-1] + (h/6) * (k21+2*k22+2*k23+k24)
         else:
             vrk4[i] = solution.c
             urk4[i] = urk4[i-1] + solution.d

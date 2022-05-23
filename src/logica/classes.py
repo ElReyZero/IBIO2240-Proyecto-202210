@@ -237,7 +237,6 @@ class Solution:
     def solveEulerForward(self, v0=-65.0, u0=-14.0):
         return eulerAdelante(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.functionV, self.functionU, self) 
 
-
     def solveEulerBackward(self, v0=-65.0, u0=-14.0):
         return eulerBackwards(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.FEulerBackRoot, self)
 
