@@ -1,4 +1,4 @@
-from .solveMethods import eulerAdelante, rungeKutta2, rungeKutta4, eulerModificado ,solveIVP
+from .solveMethods import eulerAdelante, rungeKutta2, rungeKutta4, eulerBackwards, eulerModificado ,solveIVP
 from dataclasses import dataclass
 from .exceptions import InvalidParameters
 import pickle
@@ -214,6 +214,16 @@ class Solution:
     def FSystem(self, t, y):
         return [self.functionV(t, y[0], y[1]), self.functionU(y[1], y[0])]
 
+    def FEulerBackRoot(self, yt2, t1, t2, y1t1, y2t1,h):
+        def F1Multi(t, v, u):
+            return (0.04*v**2) + 5*v + 140 - u + self.I(t)
+        # Definimos la función F2
+        def F2Multi(u, v):
+            return self.a*(self.b*v - u)
+        
+        return [y1t1 + h * (F1Multi(t2, yt2[0], yt2[1])) - yt2[0], 
+                y2t1 + h * (F2Multi(yt2[1], yt2[0])) - yt2[1]]
+
     def FEulerModRoot(self, yt2, t1, t2, y1t1, y2t1, h):
         def F1Multi(t, v, u):
             return (0.04*v**2) + 5*v + 140 - u + self.I(t)
@@ -227,8 +237,9 @@ class Solution:
     def solveEulerForward(self, v0=-65.0, u0=-14.0):
         return eulerAdelante(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.functionV, self.functionU, self) 
 
-    # Euler hacia atrás: Despejar función
-    # Euler modificado: Despejar función
+
+    def solveEulerBackward(self, v0=-65.0, u0=-14.0):
+        return eulerBackwards(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.FEulerBackRoot, self)
 
     def solveEulerModified(self, v0=-65.0, u0=-14.0):
         return eulerModificado(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.FEulerModRoot, self)

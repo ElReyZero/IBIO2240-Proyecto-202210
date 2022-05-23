@@ -81,7 +81,8 @@ def rungeKutta4(v0:float, u0:float, t0:float, tf:float, h:float, f1, f2, solutio
         t0 (float): Valor inicial del tiempo.
         tf (float): Valor final del tiempo.
         h (float): Incremento de tiempo.
-        f1 (_type_): Función que representa la ecuación diferencial.
+        f1 (function): Función que representa la ecuación diferencial v(t).
+        f2 (function): Función que representa la ecuación diferencial u(t).
 
     Returns:
         tuple: Tupla con los valores de la función en cada instante de tiempo.
@@ -97,7 +98,7 @@ def rungeKutta4(v0:float, u0:float, t0:float, tf:float, h:float, f1, f2, solutio
     for i in range(1, len(vectorT)):
 
         if vrk4[i-1] <= 30:
-            # Arreglar
+            #TODO Arreglar coeficientes
             k1 = f1(vectorT[i-1], vrk4[i-1], urk4[i-1])
             k5 = f2(urk4[i-1], vrk4[i-1])
 
@@ -117,8 +118,55 @@ def rungeKutta4(v0:float, u0:float, t0:float, tf:float, h:float, f1, f2, solutio
     return vectorT, vrk4, urk4
 
 
+def eulerBackwards(v0:float, u0:float, t0:float, tf:float, h:float, FEulerBackRoot, solution)->tuple:
+    """Función que calcula la solución de una ecuación diferencial mediante el método de Euler Backwards.
+
+    Args:
+        y0 (float): Valor inicial de la función.
+        t0 (float): Valor inicial del tiempo.
+        tf (float): Valor final del tiempo.
+        h (float): Incremento de tiempo.
+        FEulerBackRoot (function): Función que representa las ecuaciones diferenciales para euler Backwards.
+        solution (Solution): Objeto que contiene los valores de la solución.
+    Returns:
+        tuple: Tupla con los valores de la función en cada instante de tiempo.
+    """ 
+    vectorT = np.arange(t0, tf+h, h)
+    vEulerBackRoot = np.zeros(len(vectorT))
+    vEulerBackRoot[0] = v0
+
+    uEulerBackRoot = np.zeros(len(vectorT))
+    uEulerBackRoot[0] = u0
+
+    for i in range(1, len(vectorT)):
+        if vEulerBackRoot[i-1] <= 30:
+            # Euler backwards resolviendo el sistema de ecuaciones no-lineales
+            SolMod = opt.fsolve(FEulerBackRoot, np.array([vEulerBackRoot[i - 1], uEulerBackRoot[i - 1]]),
+                                (vectorT[i - 1], vectorT[i], vEulerBackRoot[i - 1], uEulerBackRoot[i - 1], h), xtol=10**-5)
+
+            vEulerBackRoot[i] = SolMod[0]
+            uEulerBackRoot[i] = SolMod[1]
+        else:
+            vEulerBackRoot[i] = solution.c
+            uEulerBackRoot[i] = uEulerBackRoot[i-1] + solution.d
+
+    return vectorT, vEulerBackRoot, uEulerBackRoot
+
+
+
 def eulerModificado(v0:float, u0:float, t0:float, tf:float, h:float, FEulerModRoot, solution)->tuple:
-    
+    """Función que calcula la solución de una ecuación diferencial mediante el método de Euler Modificado.
+
+    Args:
+        y0 (float): Valor inicial de la función.
+        t0 (float): Valor inicial del tiempo.
+        tf (float): Valor final del tiempo.
+        h (float): Incremento de tiempo.
+        FEulerModRoot (function): Función que representa las ecuaciones diferenciales para euler modificado.
+        solution (Solution): Objeto que contiene los valores de la solución.
+    Returns:
+        tuple: Tupla con los valores de la función en cada instante de tiempo.
+    """ 
     vectorT = np.arange(t0, tf+h, h)
     vEulerModRoot = np.zeros(len(vectorT))
     vEulerModRoot[0] = v0
