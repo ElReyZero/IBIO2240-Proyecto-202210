@@ -129,7 +129,9 @@ def eulerModificado(v0:float, u0:float, t0:float, tf:float, h:float, FEulerModRo
     for i in range(1, len(vectorT)):
         if vEulerModRoot[i-1] <= 30:
             # Euler modificado resolviendo el sistema de ecuaciones no-lineales
-            SolMod = opt.fsolve(FEulerModRoot, np.array([vEulerModRoot[i - 1], uEulerModRoot[i - 1]]), (vectorT[i - 1], vectorT[i], vEulerModRoot[i - 1], uEulerModRoot[i - 1], h), xtol=10**-15)
+            SolMod = opt.fsolve(FEulerModRoot, np.array([vEulerModRoot[i - 1], uEulerModRoot[i - 1]]),
+                                (vectorT[i - 1], vectorT[i], vEulerModRoot[i - 1], uEulerModRoot[i - 1], h), xtol=10**-5)
+
             vEulerModRoot[i] = SolMod[0]
             uEulerModRoot[i] = SolMod[1]
         else:

@@ -34,7 +34,7 @@ def main():
     ventana.title("Proyecto Programación Científica")
     ventana.geometry("1300x800")
     ventana.configure(background='#f0f0f0') #f0f0f0
-    ventana.resizable(0, 0)
+    #ventana.resizable(0, 0)
 
     # Crear una instancia para guardar las variables de la interfaz
     datosInterfaz = ProgramGUIVariables()
