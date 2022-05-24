@@ -112,10 +112,12 @@ def graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, 
             barra.step()
             ventana.update()
             time.sleep(0.01)
+        if barra['value'] != 0:
+            barra['value'] = 0
+            ventana.update()
+
     subplot.legend()
     canvas.draw()
-    barra.step()
-    ventana.update()
     cargandoLabel.config(text="")
 
     # Se guarda la gráfica en una variable por si el usuario la quiere persistir

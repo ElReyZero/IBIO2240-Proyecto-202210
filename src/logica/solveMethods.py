@@ -97,12 +97,11 @@ def rungeKutta4(v0:float, u0:float, t0:float, tf:float, h:float, f1, f2, solutio
 
     for i in range(1, len(vectorT)):
         if vrk4[i-1] <= 30:
-            #TODO Arreglar coeficientes
             k11 = f1(vectorT[i-1], vrk4[i-1], urk4[i-1])
             k21 = f2(urk4[i-1], vrk4[i-1])
 
             k12 = f1(vectorT[i-1] + 0.5*h, vrk4[i-1] + 0.5*h*k11, urk4[i-1] + 0.5*h*k21)
-            k22 = f2(vectorT[i-1] + 0.5*h, urk4[i-1] + 0.5*h*k21, vrk4[i-1] + 0.5*h*k12)
+            k22 = f2(urk4[i-1] + 0.5*h*k21, vrk4[i-1] + 0.5*h*k12)
             k13 = f1(vectorT[i-1] + h, vrk4[i-1] + h*k12, urk4[i-1] + h*k22)
             
             k23 = f2(urk4[i-1] + 0.5*h*k22, vrk4[i-1] + 0.5*h*k13)
