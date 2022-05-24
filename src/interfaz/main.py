@@ -36,6 +36,11 @@ def main():
     ventana.configure(background='#f0f0f0') #f0f0f0
     #ventana.resizable(0, 0)
 
+    #Revisar si la aplicación es más grande que la pantalla
+    height = ventana.winfo_screenheight()
+    botonesSimExp = 700
+    if height < 1300:
+        botonesSimExp -= 100
     # Crear una instancia para guardar las variables de la interfaz
     datosInterfaz = ProgramGUIVariables()
 
@@ -69,11 +74,11 @@ def main():
     # Crear botones de simular y exportar
     # Crear botón de simular
     botonSimular = Button(ventana, text="Simular", command= lambda: simular(datosInterfaz), height=2, width=20)
-    botonSimular.place(x=850, y=700)
+    botonSimular.place(x=850, y=botonesSimExp)
 
     # Crear botón de exportar
     botonExportar = Button(ventana, text="Exportar", command=guardarDatos, height=2, width=20)
-    botonExportar.place(x=1010, y=700)
+    botonExportar.place(x=1010, y=botonesSimExp)
 
     # Crear una barra de progreso
     barra = Progressbar(ventana, orient="horizontal", length=200, mode="determinate", maximum=6)
