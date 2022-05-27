@@ -252,7 +252,11 @@ def simular(datos):
     tablaSize = datos.getTablaSize()
 
     # Para evitar overflow de la tabla se revisa si llegó a su máximo tamaño
-    if tablaSize <8:
+    height = datos.getVentana().winfo_screenheight()
+    tamanioTabla = 8
+    if height < 1300:
+        tamanioTabla = 4
+    if tablaSize < tamanioTabla:
         tablaSize += 1
         datos.setTablaSize(tablaSize)
         if tablaSize % 2 == 0:
