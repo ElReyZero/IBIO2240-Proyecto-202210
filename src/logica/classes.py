@@ -108,6 +108,7 @@ class ProgramGUIVariables:
         return self.opciones
 
     def getSimulacionData(self):
+        """Función que devuelve los datos del tiempo y estimulación convertidos a float. Si no son floats, se devuelve una excepción"""
         try:
             scrollBarEstimulacion = float(self.simulacion['ScrollbarEstimulacion'].get())
             tiempoSimulacion = float(self.simulacion['tiempoSimulacion'].get())
@@ -127,6 +128,8 @@ class ProgramGUIVariables:
         return self.tabla['recordedDataAmount']
     
     def getSelectedMethods(self):
+        """Función que devuelve las variables donde se almacenan los métodos de la interfaz
+        """
         rungeKutta2 = self.opciones['metodos']['Runge_Kutta_2'].get()
         rungeKutta4 = self.opciones['metodos']['Runge_Kutta_4'].get()
         eulerAdelante = self.opciones['metodos']['Euler_Adelante'].get()
@@ -136,11 +139,13 @@ class ProgramGUIVariables:
         return [rungeKutta2, rungeKutta4, eulerAdelante, eulerAtras, eulerModificado, solveIVP]
 
     def getSelectedVariables(self):
+        """Función que devuelve las variables donde se almacenan las variables U y V de la interfaz"""
         V = self.opciones['variables']['V'].get()
         U = self.opciones['variables']['U'].get()
         return [V, U]
 
     def getSelectedParameters(self):
+        """Función que devuelve las variables donde se almacenan los parámetros a, b, c y d de la interfaz"""
         a = self.opciones['parametros']['a'].get()
         b = self.opciones['parametros']['b'].get()
         c = self.opciones['parametros']['c'].get()
@@ -199,6 +204,8 @@ class Solution:
             raise InvalidParameters("El tiempo de inicio debe ser menor al tiempo de simulación")
 
     def I(self, t):
+        """Función de corriente que depende del tiempo usada en el sistema de ecuaciones
+        """
         if t > self.tiempoInicio and t < self.tiempoFinal:
             I = self.valorEstimulacion
         else:
@@ -206,15 +213,22 @@ class Solution:
         return I
 
     def functionV(self, t, v, u):
+        """ Función V(t) del problema
+        """
         return (0.04*v**2) + 5*v + 140 - u + self.I(t)
 
     def functionU(self, u, v):
+        """ Función U(t) del problema
+        """
         return self.a*(self.b*v - u)
 
     def FSystem(self, t, y):
+        """ Sistema de funciones para el ivpsolve
+        """
         return [self.functionV(t, y[0], y[1]), self.functionU(y[1], y[0])]
 
     def FEulerBackRoot(self, yt2, t1, t2, y1t1, y2t1,h):
+        """ Función auxiliar para el método de Euler atrás"""
         def F1Multi(t, v, u):
             return (0.04*v**2) + 5*v + 140 - u + self.I(t)
         # Definimos la función F2
@@ -225,6 +239,7 @@ class Solution:
                 y2t1 + h * (F2Multi(yt2[1], yt2[0])) - yt2[1]]
 
     def FEulerModRoot(self, yt2, t1, t2, y1t1, y2t1, h):
+        """ Función auxiliar para el método de Euler modificado"""
         def F1Multi(t, v, u):
             return (0.04*v**2) + 5*v + 140 - u + self.I(t)
         # Definimos la función F2
@@ -235,21 +250,27 @@ class Solution:
                 y2t1 + (h / 2.0) * (F2Multi(y2t1, y1t1) + F2Multi(yt2[1], yt2[0])) - yt2[1]]
 
     def solveEulerForward(self, v0=-65.0, u0=-14.0):
+        """ Método de Euler adelante para resolver el problema"""
         return eulerAdelante(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.functionV, self.functionU, self) 
 
     def solveEulerBackward(self, v0=-65.0, u0=-14.0):
+        """ Método de Euler atrás para resolver el problema"""
         return eulerBackwards(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.FEulerBackRoot, self)
 
     def solveEulerModified(self, v0=-65.0, u0=-14.0):
+        """ Método de Euler modificado para resolver el problema"""
         return eulerModificado(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.FEulerModRoot, self)
 
     def solveRungeKutta2(self, v0=-65.0, u0=-14.0):
+        """ Método de Runge-Kutta de orden 2 para resolver el problema"""
         return rungeKutta2(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.functionV, self.functionU, self)
 
     def solveRungeKutta4(self, v0=-65.0, u0=-14.0):
+        """ Método de Runge-Kutta de orden 4 para resolver el problema"""
         return rungeKutta4(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.functionV, self.functionU, self)
 
     def solveIVP(self, v0=-65.0, u0=-14.0):
+        """ Método de ivp para resolver el problema"""
         return solveIVP(v0, u0, 0.0, self.tiempoSimulacion, 0.01, self.FSystem)
 
 @dataclass
@@ -273,15 +294,23 @@ class SaveData:
     uIVP : np.array
 
     def save(self, fileName):
+        """Función que guarda los datos en un archivo binario
+
+        Args:
+            fileName (str): Nombre del archivo
+        """
         pickle.dump(self, open(fileName, 'wb'), pickle.HIGHEST_PROTOCOL)
 
     @staticmethod
     def load(fileName):
+        """Función que carga los datos de un archivo binario"""
         data =  pickle.load(open(fileName, 'rb'))
         return data
 
     def asList(self):
+        """Función que devuelve los datos de la clase en una lista"""
         return [self.tiempo, self.tiempoIVP, self.vFor, self.uFor, self.vBack, self.uBack, self.vMod, self.uMod, self.vRK2, self.uRK2, self.vRK4, self.uRK4, self.vIVP, self.uIVP]
     
     def asDict(self):
+        """Función que devuelve los datos de la clase en un diccionario"""
         return {'tiempo': self.tiempo, 'vFor': self.vFor, 'uFor': self.uFor, 'vBack': self.vBack, 'uBack': self.uBack, 'vMod': self.vMod, 'uMod': self.uMod, 'vRK2': self.vRK2, 'uRK2': self.uRK2, 'vRK4': self.vRK4, 'uRK4': self.uRK4, 'vIVP': self.vIVP, 'uIVP': self.uIVP}

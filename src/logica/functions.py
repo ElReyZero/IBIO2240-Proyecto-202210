@@ -34,6 +34,7 @@ def graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, 
     cargandoLabel = carga[2]
     cargandoLabel.config(text="Cargando...")
 
+    # Se ejecutan los métodos seleccionados y se grafican directamente en el canvas de la interfaz
     if eulerAdelante:
         tiempo, vFor, uFor = solucion.solveEulerForward(v0=v0, u0=u0)
         if V:
@@ -107,6 +108,7 @@ def graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, 
     if not eulerAdelante and not eulerAtras and not eulerModificado and not rungeKutta2 and not rungeKutta4 and not solveIVP:
         raise InvalidParameters("No se seleccionó ningún método")
 
+    # Se revisa si se llenó o no la barra de carga, de lo contrario, se llena
     if not contador == 6:
         for _ in range(contador, 5):
             barra.step()
@@ -115,7 +117,8 @@ def graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, 
         if barra['value'] != 0:
             barra['value'] = 0
             ventana.update()
-
+    
+    # Se termina graficando todo
     subplot.legend()
     canvas.draw()
     cargandoLabel.config(text="")
@@ -176,6 +179,7 @@ def simular(datos):
     c = params[2]
     d = params[3]
 
+    # Se obtienen los datos de la ventana, barra de progreso y label de cargando
     carga = list()
     carga.append(datos.getVentana())
     carga.append(datos.getBarraProgreso())
@@ -243,7 +247,6 @@ def simular(datos):
         # Se crea una instancia de la clase Solution con los valores obtenidos
         solucion, canvas, subplot = createSolucion(datos, a, b, c, d, V, U, tiempoSimulacion, tiempoInicio, tiempoFinal, valorEstimulacion)
         graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, eulerModificado, rungeKutta2, rungeKutta4, solveIVP)
-
     else:
         raise InvalidParameters("El valor predeterminado elegido no es válido")
     
@@ -280,6 +283,13 @@ def simular(datos):
 
 
 def exportarDatos():
+    """Función para exportar los datos de la simulación a un archivo binario
+
+    Raises:
+        InvalidParameters: En caso de que no hayan datos para exportar, se levanta esta excepción
+    """
+
+    # Si hay datos, se obtiene la variable que los almacena y se exportan a binario
     if LATEST_PLOT:
         LATEST_PLOT.save("PlotFile_"+str(datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))+".bin")
     else:
