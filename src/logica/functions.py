@@ -258,7 +258,7 @@ def simular(datos):
     # Se revisa también la resolución de la ventana para mirar el tamaño máximo de la tabla
     height = datos.getVentana().winfo_screenheight()
     maxTablaSize = 8
-    if height < 1300:
+    if height < 800:
         maxTablaSize = 4
 
     if tablaSize < maxTablaSize:

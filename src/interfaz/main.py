@@ -39,7 +39,7 @@ def main():
     #Revisar si la aplicación es más grande que la pantalla
     height = ventana.winfo_screenheight()
     botonesSimExp = 700
-    if height < 1300:
+    if height < 800:
         botonesSimExp -= 100
     # Crear una instancia para guardar las variables de la interfaz
     datosInterfaz = ProgramGUIVariables()
