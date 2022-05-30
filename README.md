@@ -8,6 +8,10 @@ Proyecto final realizado para la clase de Programación Científica [IBIO2240] b
 
 
 ## Cómo correr
+Esta aplicación tiene varias dependencias, por lo que es necesario instalarlas previamente.
+Para realizarlo se debe ejecutar el siguiente comando:
+```pip install -r requirements.txt```
+
 El programa se puede correr desde la consola con el comando:
 
 * En windows:
