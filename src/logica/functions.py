@@ -27,6 +27,7 @@ def graficar(carga, solucion, subplot, canvas, V, U, eulerAdelante, eulerAtras, 
     vIVP = None
     uIVP = None
     tiempoIVP = None
+    tiempo = None
     contador = 0
 
     ventana = carga[0]
